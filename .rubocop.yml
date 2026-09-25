@@ -1,0 +1,7 @@
+# Omakase Ruby styling for Rails
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+
+# The portable Learning Agent toolkit has its own style and test suite.
+AllCops:
+  Exclude:
+    - "learning-agent/**/*"
