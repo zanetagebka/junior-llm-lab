@@ -2,7 +2,15 @@
 
 **Module 10 — Product judgment**
 
-**Lovable PoC:** Prototype one meaningful product improvement selected from user/eval/operational evidence. State the hypothesis before building.
+## Documentation supplied for the PoC
+
+**Situation:** The final product improvement must address a documented weakness from user feedback, evaluation, or operational evidence. The team needs a focused proposal it can review before the production-shaped slice is built.
+
+**Required behavior:** The brief identifies the evidence, affected user workflow, proposed change, expected outcome, and one failure or unsupported state. The PoC makes that change visible without implying that the backend already proves the hypothesis.
+
+**Acceptance check:** Demo the before and proposed after flows, including the failure state. Point to the evidence that motivated the change and explain what later implementation and evaluation must still establish.
+
+**PoC assignment:** Prototype one meaningful product improvement selected from user/eval/operational evidence. State the hypothesis before building.
 
 **Rails/Ruby:** Implement the production-shaped vertical slice, tests and evaluation. Add/update ADR and threat considerations where relevant.
 
@@ -12,4 +20,4 @@
 
 ## Completion
 
-Follow the [lesson workflow](../WORKFLOW.md). Keep the Lovable change small, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.

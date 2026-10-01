@@ -2,7 +2,15 @@
 
 **Module 9 — Quality and operational risk**
 
-**Lovable PoC:** Prototype an operations view showing request duration, model, tokens/cost, retrieval time and failures. Define what action each metric could trigger.
+## Documentation supplied for the PoC
+
+**Situation:** The team needs to notice slow, costly, or failing requests and decide what to investigate. A useful operations view links a measurement to a possible action.
+
+**Required behavior:** A request view includes duration, model, token or cost information, retrieval time, and failure status where available. Missing measurements are shown as unavailable rather than invented values. Sample metrics are labeled.
+
+**Acceptance check:** Show a slow request and a failed request. For each, state what the reviewer would investigate and whether the displayed numbers are real or simulated.
+
+**PoC assignment:** Prototype an operations view showing request duration, model, tokens/cost, retrieval time and failures. Define what action each metric could trigger.
 
 **Rails/Ruby:** Capture real available metrics and produce a simple report over evaluation runs.
 
@@ -12,4 +20,4 @@
 
 ## Completion
 
-Follow the [lesson workflow](../WORKFLOW.md). Keep the Lovable change small, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.

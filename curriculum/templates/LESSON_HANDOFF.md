@@ -4,12 +4,14 @@ Keep this note short and in the learner's own words. Share only what you are com
 
 ## Before
 
+- Documentation I received and the requirement I chose to demonstrate:
 - What I expected:
 - My first approach:
 
 ## What I made
 
 - Lovable behavior and what was mocked:
+- PoC demo and review decision (approved, changes requested, or rejected):
 - Ruby or Rails behavior:
 - Where the two differ:
 

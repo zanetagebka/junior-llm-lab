@@ -17,7 +17,7 @@ Tasks 00–20 are the assignments. These ten modules explain why adjacent tasks 
 
 ## The product thread
 
-The fictional Knowledge Assistant has one evolving Lovable prototype and one evolving Rails application. Tasks 01–05 and 12 can use standalone Ruby scripts in `standalone/`. Task 06 is a bridge into the existing Rails starter, delivered in small PRs. The learner should retain the raw request from Task 02 so Task 08 can compare it with RubyLLM.
+The fictional Knowledge Assistant has one evolving Lovable prototype and one evolving Rails application. For each task, the learner first receives its task page as documentation, plus relevant fictional source documents. They derive the PoC from that brief, demo it, and receive a recorded approval, request for changes, or rejection before starting the Ruby or Rails step. Tasks 01–05 and 12 can use standalone Ruby scripts in `standalone/`. Task 06 is a bridge into the existing Rails starter, delivered in small PRs. The learner should retain the raw request from Task 02 so Task 08 can compare it with RubyLLM.
 
 Use the same small question set as the product grows. Record expected documents before adding semantic search. Later evals should reuse and expand those examples so improvements can be compared with the keyword baseline.
 
