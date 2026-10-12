@@ -2,7 +2,7 @@
 
 A reusable skill package for taking software tasks from a real brief through
 research, planning, implementation, verification, review, and a pull request.
-It is for engineers across projects. Junior LLM Lab is the first pilot, with
+It is for engineers across projects. LLM Lab is the first pilot, with
 its mentoring rules supplied by project configuration rather than the core.
 
 ## Choose a skill
@@ -23,7 +23,7 @@ a ticket prefix, or a default branch called `main`. Tracker and forge integratio
 are optional for local work. The initial publication path is documented for
 GitHub's `gh`; other forges use an available project-configured tool.
 
-## First-use flow: seven steps in Junior LLM Lab
+## First-use flow: seven steps in LLM Lab
 
 Start a fresh agent session in the host repository root. Shared `AGENTS.md`
 instructions route requests to the canonical skills; hosts that discover
@@ -173,7 +173,7 @@ touched comments; `self-review` checks the broader behavior and requirements.
 
 ## Install in another project
 
-Junior LLM Lab includes project routing instructions. Skill registration is a
+LLM Lab includes project routing instructions. Skill registration is a
 separate setup action. To connect
 a copied package in another Git repository, run its installer from that root:
 

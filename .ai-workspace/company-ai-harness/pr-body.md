@@ -1,4 +1,4 @@
-Adds a reusable AI harness for taking a task brief through research, planning, implementation, verification, review, and PR preparation. Junior LLM Lab supplies its mentoring rules through project configuration; the existing Learning Agent keeps its original three skills and two scripts.
+Adds a reusable AI harness for taking a task brief through research, planning, implementation, verification, review, and PR preparation. LLM Lab supplies its mentoring rules through project configuration; the existing Learning Agent keeps its original three skills and two scripts.
 
 - Add eight agent-neutral skills, a shared workflow contract, and private resumable task workspaces.
 - Add a portable installer and a read-only Git context helper, with integration tests and CI coverage.

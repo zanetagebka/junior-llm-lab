@@ -1,4 +1,4 @@
-# Junior LLM Lab
+# LLM Lab
 
 This repository trains developers to work with the company AI harness: give it
 a brief, steer its work, verify its evidence, and ship the intended change.

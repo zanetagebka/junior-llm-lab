@@ -1,4 +1,4 @@
-# Junior LLM Lab harness adapter
+# LLM Lab harness adapter
 
 - Training tasks live in `curriculum/tasks/NN-*.md`. For Task NN, use
   `.ai-workspace/tasks/NN/workspace.md` for operational state.

@@ -1,4 +1,4 @@
-# Junior LLM Lab PR adaptation
+# LLM Lab PR adaptation
 
 - Use `.github/pull_request_template.md`.
 - Default to draft PRs.

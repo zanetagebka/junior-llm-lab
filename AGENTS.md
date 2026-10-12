@@ -1,4 +1,4 @@
-# Junior LLM Lab instructions
+# LLM Lab instructions
 
 This repository is a training environment for the company AI harness. The task list is `curriculum/README.md`; use the relevant `curriculum/tasks/NN-*.md` and `curriculum/WORKFLOW.md` for the current task. Older plans outside this repository are archives, not task instructions.
 
