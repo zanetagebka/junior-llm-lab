@@ -1,6 +1,6 @@
 # Gate before internal company data
 
-Tasks 00–20 use fictional documents. A convincing RAG demo or completed capstone does not authorize using real company information. Before internal use, the mentor and appropriate company owners must establish and verify:
+The training tasks use fictional documents. A convincing model-backed demo, such as Task 10, does not authorize using real company information. Before internal use, the mentor and appropriate company owners must establish and verify:
 
 - document ownership, ingestion, update, and deletion behavior;
 - authentication and document-level authorization before retrieval and before displaying a source;
@@ -10,4 +10,4 @@ Tasks 00–20 use fictional documents. A convincing RAG demo or completed capsto
 - measurable answer support, refusal behavior, latency, cost, and failure handling;
 - an operational owner and a way to report or correct bad answers.
 
-The junior can design and test these boundaries with synthetic data in Tasks 16–20. Internal readiness is a separate decision based on actual evidence and company policy.
+Learners can design and test these boundaries with synthetic data. Internal readiness is a separate decision based on actual evidence and company policy.

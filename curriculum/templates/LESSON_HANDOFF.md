@@ -1,28 +1,28 @@
-# Task XX — Lesson handoff
+# Task NN — Handoff
 
-Keep this note short and in the learner's own words. Share only what you are comfortable putting in a PR. The detailed learning log stays private.
+Keep this short and in your own words. Share only what you are comfortable
+putting in a PR. The task workspace and your learning log stay private.
 
-## Before
+## What was asked
 
-- Documentation I received and the requirement I chose to demonstrate:
-- What I expected:
-- My first approach:
+- Task and the acceptance criteria I worked to:
+- Path: on my own / via the harness / both
 
-## What I made
+## What was done
 
-- Lovable behavior and what was mocked:
-- PoC demo and review decision (approved, changes requested, or rejected):
-- Ruby or Rails behavior:
-- Where the two differ:
+- Behavior added or changed:
+- Prompts or involvement level I used (harness path):
+- Where I intervened, corrected, or rejected the agent's work:
 
 ## Evidence
 
-- Test, command, or demo and its result:
+- Checks I ran myself, with results:
+- Checks the agent reported that I did not re-run:
 - What this evidence does not establish:
 
-## Learning
+## Reflection
 
-- One thing I can now explain:
-- A wrong assumption or difficult part:
-- How AI helped; what I verified myself:
-- One open question for the mentor:
+- One thing the harness did well:
+- One thing it got wrong or would have got wrong without me:
+- For path C, the main difference between the two attempts:
+- One open question:

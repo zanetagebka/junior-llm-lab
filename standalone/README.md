@@ -1,5 +1,10 @@
 # Standalone Ruby experiments
 
-Tasks 01–05 and 12 may be implemented here as independent Ruby scripts or small folders. They do not need to use Rails to prove a mechanism. Keep them runnable with documented commands and test the network or model boundary with fakes. Task 07 deliberately brings the raw model interaction into the Rails product; Task 08 compares that code with RubyLLM.
+Use this directory for optional Ruby experiments that do not need the Rails
+app. Document how to run them and use fakes for network or model boundaries.
 
-Put no provider keys or real company documents in this directory. Solutions are left to the learner.
+The active programme is [Tasks 01–12](../curriculum/README.md). Its tasks start
+from the Northstar Desk baseline on separate branches; this directory is not
+a second task progression. Task 10 leaves the model client library open.
+
+Keep provider keys and real company documents out of this directory.

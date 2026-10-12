@@ -1,0 +1,2186 @@
+diff --git a/.ai-workspace/configs/harness.md b/.ai-workspace/configs/harness.md
+index 7e0e330..c5c1757 100644
+--- a/.ai-workspace/configs/harness.md
++++ b/.ai-workspace/configs/harness.md
+@@ -1,7 +1,17 @@
+ # Junior LLM Lab harness adapter
+ 
+-- Harness maintenance is tooling work. Lessons follow root `AGENTS.md` and
+-  the curriculum workflow; keep `learning-agent/` unchanged.
+-- For Task XX, use `.ai-workspace/tasks/XX/workspace.md` for operational state.
+-- Check harness tooling with `ruby ai-harness/test/harness_test.rb`. Tooling
+-  changes need Rails or provider checks only when they affect those integrations.
++- Training tasks live in `curriculum/tasks/NN-*.md`. For Task NN, use
++  `.ai-workspace/tasks/NN/workspace.md` for operational state.
++- Each task starts from `main`. Never base a task branch on another task's
++  branch unless the task page says so (Task 09 stacks B on A).
++- An explicit request naming a training task and a harness skill authorizes
++  that skill's work for the task's brief. Honor the involvement level named in
++  the request or on the task page; otherwise use the shared default.
++- Treat the task page's Brief as the source and its acceptance criteria as the
++  definition of done. Path, Watch for, and Debrief sections are guidance for
++  the learner, not requirements to implement.
++- Project checks: `bin/rails test` and `bin/rubocop`. Report real output.
++- Use only fictional data. Never write provider keys or other secrets into the
++  workspace, commits, logs, or PR bodies.
++- Harness maintenance is tooling work; keep `learning-agent/` unchanged. Check
++  harness tooling with `ruby ai-harness/test/harness_test.rb`.
+diff --git a/AGENTS.md b/AGENTS.md
+index 1722b92..65bd213 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,10 +1,10 @@
+ # Junior LLM Lab instructions
+ 
+-This repository is a learning environment. The active programme is in `curriculum/MODULES.md`; use the relevant `curriculum/tasks/XX-*.md` and `curriculum/WORKFLOW.md` for the current lesson. Older plans outside this repository are archives, not task instructions.
++This repository is a training environment for the company AI harness. The task list is `curriculum/README.md`; use the relevant `curriculum/tasks/NN-*.md` and `curriculum/WORKFLOW.md` for the current task. Older plans outside this repository are archives, not task instructions.
+ 
+-The Rails app is a starter. Do not pre-implement later lessons. Standalone Ruby experiments belong in `standalone/` when a task does not need Rails. Use only fictional documents from `curriculum/fixtures/` until the internal-use gate is explicitly met.
++Every task starts from `main`, which holds the Northstar Desk baseline app. Do not implement other tasks' briefs or merge task branches into `main`. Use only fictional data from `curriculum/fixtures/` and the seeded app.
+ 
+-For lesson work, follow the Learning Agent instructions below. Its private `docs/LEARNING_LOG.local.md` is the sole detailed learning log. At the end of a meaningful lesson, route to `finish-learning-session`; a shareable PR note uses `curriculum/templates/LESSON_HANDOFF.md` only with the learner's confirmed words. Tests show behavior, while the learner's explanation is separate evidence.
++Tasks can be done on the learner's own, through the harness, or both. An explicit harness request naming a training task (for example "Use implement-task for Task 03") authorizes the work that request describes for that task's brief, at the involvement level the request or task page names. The Learning Agent's code boundary governs guided-coding sessions and work on the learner's own path. Its private `docs/LEARNING_LOG.local.md` is the sole detailed learning log; a shareable PR note uses `curriculum/templates/LESSON_HANDOFF.md` only with the learner's confirmed words. Tests show behavior, while the learner's explanation is separate evidence.
+ 
+ <!-- learning-agent:start -->
+ ## Learning Agent
+diff --git a/curriculum/INTERNAL_USE_GATE.md b/curriculum/INTERNAL_USE_GATE.md
+index c3d88c9..cd18d06 100644
+--- a/curriculum/INTERNAL_USE_GATE.md
++++ b/curriculum/INTERNAL_USE_GATE.md
+@@ -1,6 +1,6 @@
+ # Gate before internal company data
+ 
+-Tasks 00–20 use fictional documents. A convincing RAG demo or completed capstone does not authorize using real company information. Before internal use, the mentor and appropriate company owners must establish and verify:
++The training tasks use fictional documents. A convincing model-backed demo, such as Task 10, does not authorize using real company information. Before internal use, the mentor and appropriate company owners must establish and verify:
+ 
+ - document ownership, ingestion, update, and deletion behavior;
+ - authentication and document-level authorization before retrieval and before displaying a source;
+@@ -10,4 +10,4 @@ Tasks 00–20 use fictional documents. A convincing RAG demo or completed capsto
+ - measurable answer support, refusal behavior, latency, cost, and failure handling;
+ - an operational owner and a way to report or correct bad answers.
+ 
+-The junior can design and test these boundaries with synthetic data in Tasks 16–20. Internal readiness is a separate decision based on actual evidence and company policy.
++Learners can design and test these boundaries with synthetic data. Internal readiness is a separate decision based on actual evidence and company policy.
+diff --git a/curriculum/MODULES.md b/curriculum/MODULES.md
+deleted file mode 100644
+index c8cf783..0000000
+--- a/curriculum/MODULES.md
++++ /dev/null
+@@ -1,28 +0,0 @@
+-# Ten modules, one task sequence
+-
+-Tasks 00–20 are the assignments. These ten modules explain why adjacent tasks belong together; they are not ten extra assignments. The Rails app is available from day one. Standalone Ruby experiments remain separate until a task deliberately brings the idea into Rails.
+-
+-| Module | Tasks | Main understanding | Product result |
+-|---|---|---|---|
+-| 1. Product and network basics | 00–01 | Rails request flow; HTTP request and response | Product shell and HTTP experiment |
+-| 2. Talking to a model | 02–03 | Raw model call; prompt design and comparison | First model output outside Rails |
+-| 3. Reliability and context | 04–05 | External failures; conversation history and context budget | A testable Ruby conversation experiment |
+-| 4. Rails vertical slice | 06–07 | Persistence and request flow; a real model-backed question | Documents and conversations in Rails |
+-| 5. Abstractions and contracts | 08–09 | RubyLLM's boundary; validated structured output | A replaceable, tested model service |
+-| 6. Actions and slow work | 10–11 | Controlled tools; jobs, retries, and visible status | Safe read-only capability and asynchronous flow |
+-| 7. Representation and retrieval | 12–13 | Embeddings and similarity; keyword baseline | Search over fictional documents |
+-| 8. Grounded answers | 14–15 | Retrieval versus generation; source support | An answer with inspectable evidence |
+-| 9. Quality and operational risk | 16–18 | Evals, latency/cost, privacy, prompt injection | Measured behavior and threat model |
+-| 10. Product judgment | 19–20 | User hypothesis and non-AI baseline; technical defence | An evidence-backed capstone |
+-
+-## The product thread
+-
+-The fictional Knowledge Assistant has one evolving Lovable prototype and one evolving Rails application. For each task, the learner first receives its task page as documentation, plus relevant fictional source documents. They derive the PoC from that brief, demo it, and receive a recorded approval, request for changes, or rejection before starting the Ruby or Rails step. Tasks 01–05 and 12 can use standalone Ruby scripts in `standalone/`. Task 06 is a bridge into the existing Rails starter, delivered in small PRs. The learner should retain the raw request from Task 02 so Task 08 can compare it with RubyLLM.
+-
+-Use the same small question set as the product grows. Record expected documents before adding semantic search. Later evals should reuse and expand those examples so improvements can be compared with the keyword baseline.
+-
+-## Advancement
+-
+-A completed screen or passing test is partial evidence. At each module boundary, the mentor asks the learner to trace one data flow, defend one choice, identify one failure mode, and make one small change without a generated solution. Reinforce a gap before advancing. Task 06 can take several PRs; the numbers are a dependency order, not a weekly schedule.
+-
+-The lab teaches how LLM applications work from code: HTTP, prompts, context, nondeterministic output, contracts, tools, embeddings, retrieval, evaluation, and failure boundaries. Model training and transformer internals are separate optional mentor-led study topics.
+diff --git a/curriculum/README.md b/curriculum/README.md
+new file mode 100644
+index 0000000..3dbc62f
+--- /dev/null
++++ b/curriculum/README.md
+@@ -0,0 +1,70 @@
++# Harness training tasks
++
++These twelve tasks teach how to work with the company AI harness
++(`ai-harness/`): handing it a brief, steering it, checking what it claims,
++and shipping only what you meant to ship. They use a small fictional
++application, **Northstar Desk**, so the software problems stay realistic
++without needing company code or data.
++
++## Ground rules
++
++- **`main` is the baseline.** Every task starts from `main` and none of them
++  needs another task's code. Do not merge task branches into your fork's
++  `main`; that keeps every task startable at any time.
++- **Order is by complexity, not dependency.** The levels below build harness
++  skills gradually. If you already know the basics, start wherever you like.
++- **Three ways to do a task.** Do it on your own, do it through the harness,
++  or do both and compare. See [the workflow](WORKFLOW.md).
++- **Fictional data only.** Use the documents in [fixtures/](fixtures/README.md)
++  and the seeded Northstar Desk data. Never paste company code, documents, or
++  credentials into a task or an agent session.
++
++## The baseline application
++
++Northstar Desk is a small Rails app for a fictional company's internal
++requests. The business rules come from the [fixture documents](fixtures/):
++
++| Area | Rule source | Baseline state |
++|---|---|---|
++| Employees | — | Seeded employees and managers; an "acting as" switcher instead of real login |
++| Expense claims | [D01](fixtures/D01-expenses.md) | Create and list claims; approval fields exist |
++| Equipment reports | [D02](fixtures/D02-equipment.md) | Employees can report a lost or damaged device |
++| Incidents | [D03](fixtures/D03-incidents.md) | Incidents with severity, status, on-call engineer, and lead |
++| Vacation requests | [D04](fixtures/D04-vacation.md) | Create and list requests; status field exists, no approval flow |
++| Handbook | All fixtures | Read-only page showing the four fixture documents |
++
++The baseline is not perfect. Some tasks rely on that.
++
++## Tasks
++
++| # | Task | Level | Harness focus | Size |
++|---|---|---|---|---|
++| 01 | [Read before you touch](tasks/01-read-before-you-touch.md) | 1 · Orientation | `config-check`, context helper, research-only scope | 1–2 h |
++| 02 | [Plan, don't build](tasks/02-plan-dont-build.md) | 1 · Orientation | `plan-work`, slices, open decisions | 1–2 h |
++| 03 | [First hand-off](tasks/03-first-hand-off.md) | 1 · Orientation | `implement-task` (autonomous), reading evidence | 2–3 h |
++| 04 | [Approve the plan first](tasks/04-approve-the-plan-first.md) | 2 · Steering | `plan-review` involvement | 3–4 h |
++| 05 | [Reproduce, then fix](tasks/05-reproduce-then-fix.md) | 2 · Steering | Bug workflow, `step-review` checkpoint | 2–3 h |
++| 06 | [Stop and resume](tasks/06-stop-and-resume.md) | 2 · Steering | Task workspace, `status`, resuming | 3–4 h |
++| 07 | [Review a change you didn't write](tasks/07-review-a-change.md) | 3 · Quality gates | `self-review`, `writing-code-comments` | 2–3 h |
++| 08 | [Ship only what you mean](tasks/08-ship-only-what-you-mean.md) | 3 · Quality gates | `create-pr`, scoped staging, publication | 1–2 h |
++| 09 | [Two tracks at once](tasks/09-two-tracks-at-once.md) | 3 · Quality gates | `worktree-create`, stacked PRs | 3–4 h |
++| 10 | [A model behind a boundary](tasks/10-model-behind-a-boundary.md) | 4 · Judgment | Verifying non-deterministic work | 4–6 h |
++| 11 | [Make the harness fit](tasks/11-make-the-harness-fit.md) | 4 · Judgment | Project configuration, portability | 2–4 h |
++| 12 | [Capstone: from a vague request](tasks/12-capstone-vague-request.md) | 4 · Judgment | Whole flow, chosen involvement, retrospective | 1–2 days |
++
++Sizes assume one path. Doing a task both ways takes roughly 1.5–2 times as long.
++
++## What each level teaches
++
++1. **Orientation.** What the harness reads, where it keeps state, what a
++   request does and does not authorize, and how to read its evidence.
++2. **Steering.** Choosing involvement (autonomous, plan-review, step-review),
++   making it reproduce before fixing, and picking up interrupted work.
++3. **Quality gates.** Reviewing critically, publishing exactly the intended
++   change, and running parallel or stacked work without collisions.
++4. **Judgment.** Work where the agent cannot check its own claims, adapting
++   the harness to a team's rules, and owning requirements end to end.
++
++Every task ends with a short debrief. Passing tests show behavior; your own
++explanation of what happened, and what you verified yourself, is separate
++evidence.
+diff --git a/curriculum/WORKFLOW.md b/curriculum/WORKFLOW.md
+index 9592c3c..d422165 100644
+--- a/curriculum/WORKFLOW.md
++++ b/curriculum/WORKFLOW.md
+@@ -1,41 +1,89 @@
+-# Lesson workflow
++# Task workflow
+ 
+-Use this workflow with each task in `tasks/`. Keep evidence short enough that it helps learning rather than becoming a second project. The mentor gives the learner the current task page, including its **Documentation supplied for the PoC** section, and any relevant fictional documents from `fixtures/` before PoC work begins. The **PoC assignment** states the expected scope; the learner decides how to meet the documented behavior and acceptance check. If a task needs more detail, the mentor supplies a short written addendum with the user need, constraints, and acceptance criteria. Use only fictional documents until the [internal-use gate](INTERNAL_USE_GATE.md) is met.
++Each task page has the same parts. **Brief** is agent-neutral: it is what a
++colleague would hand you, and it is what you hand the harness. **Path A / B /
++C** explain how to approach the brief on your own, through the harness, or
++both. **Done when** lists the evidence a reviewer will look for.
+ 
+-## 1. Read the documentation and frame the behavior
++## 1. Read the brief and pick a path
+ 
+-The learner reads the supplied documentation, then writes the user outcome, one or two acceptance criteria grounded in it, a first PoC idea, and any open questions or assumptions. The learner identifies what the PoC can demonstrate and what Lovable will hide. The mentor resolves material gaps in the brief before the PoC is built.
++| Path | Use it when | Branch |
++|---|---|---|
++| A — on your own | You want to practise the underlying engineering, or to set a baseline before trying the harness | `task-NN-solo` |
++| B — via the harness | You want to practise delegating, steering, and checking agent work | `task-NN-harness` |
++| C — both | You want to see what the harness changes about the work | both branches, solo first |
+ 
+-## 2. Prepare the Lovable PoC
++For path C, do the solo attempt first, or at least write your own plan first.
++Reading the agent's output before forming your own view removes most of the
++comparison's value.
+ 
+-The learner creates or changes only the interaction or state needed to demonstrate the documented requirements. For a technical task, a small inspector or simulated failure state is sufficient; do not build a new app each time. Record what is real, what is mocked, where execution happens, and what data crosses a boundary. Keep credentials and company data out of the prototype.
++Start every branch from `main`:
+ 
+-The result is a short **prototype contract**: inputs, outputs, states, errors, and the behavior the Ruby or Rails implementation must make real. Lovable-generated code is not the Rails implementation.
++```sh
++git switch main
++git switch -c task-NN-harness
++```
+ 
+-## 3. Demo and review the PoC
++To keep both paths checked out at once, use `worktree-create` (practised in
++Task 09) or `git worktree add`.
+ 
+-The learner demos the relevant flows and states against the supplied documentation, explains the assumptions and mocked behavior, and answers reviewer questions. The reviewer records one decision with a reason in the prototype contract: **approved**, **changes requested**, or **rejected**. For changes requested, revise and demo again. For rejection, revisit the brief or choose a different approach before creating another PoC. Record the final decision and any agreed changes in the same contract. Approval is the gate to the Ruby or Rails step; it confirms the proposed behavior, not technical feasibility or correctness.
++## 2. Work the task
+ 
+-## 4. Implement or experiment
++**Path A.** Use your normal tools. The Learning Agent is available for hints
++and debugging without generating your solution:
+ 
+-Use a standalone Ruby script when the task is about a mechanism, and the Rails app when the task is about the product. The learner makes a meaningful first attempt and brings a specific question or observation to the agent. They may explicitly request a small implementation step when needed; the mentor remains responsible for checking understanding rather than enforcing unproductive struggle.
++```text
++Use guided-coding to help me investigate this Task NN problem: <observation>.
++```
+ 
+-For a meaningful prompt change, record the observed problem, a hypothesis before editing, the version diff, and a comparison on the same examples where practical. Use the [prompt experiment template](templates/PROMPT_EXPERIMENT.md) for substantial changes. Routine wording fixes need no experiment form.
++**Path B.** Each task page gives starting prompts. In this repository, an
++explicit harness request for a named training task (for example "Use
++implement-task for Task 03") authorizes the agent to implement that task's
++brief. Operational state lives in the ignored
++`.ai-workspace/tasks/NN/workspace.md`; read it while the agent works, not only
++at the end.
+ 
+-## 5. Verify and compare
++Watch for three things in every harness task:
+ 
+-Show the relevant test, command, manual check, or eval result and what it proves. Identify at least one difference between the prototype and the Ruby or Rails behavior. Separate repository facts from the learner's interpretation.
++1. **Scope.** Did the agent stay inside the brief and the request? A research
++   or planning request does not authorize edits.
++2. **Evidence.** Is each verification line something that was actually run,
++   with its real output? "Should pass" and "Not run" are not passes.
++3. **Decisions.** Which choices did the agent make silently that the brief
++   left open?
+ 
+-## 6. Explain and log
++## 3. Verify it yourself
+ 
+-The learner explains one important data flow or design decision without reading an agent-generated answer. At the end of a meaningful lesson, run `finish-learning-session` to update the private `learning-agent/docs/LEARNING_LOG.local.md`. The agent asks for the learner's own reflection and does not invent what they learned.
++Run the checks the task asks for yourself, at least once, on the final state.
++Compare your results with what the agent recorded. A mismatch is a finding
++worth writing down, not something to smooth over.
+ 
+-Use [the lesson handoff template](templates/LESSON_HANDOFF.md) for a short PR or review note. The learner decides what reflection to share; the private log is never copied wholesale. The mentor reviews the code and evidence, then may request one small change to check transfer of understanding.
++The usual project checks are:
+ 
+-## Learning Agent commands
++```sh
++bin/rails test
++bin/rubocop
++```
+ 
+-- First session: `Use start-learning-project to set up my learning focus for Task 00.`
+-- During work: `Use guided-coding to help me investigate this Task XX problem.`
+-- At closure: `Use finish-learning-session to record what I learned and the next step.`
++## 4. Debrief
+ 
+-The agent's [instructions](../learning-agent/AGENTS.md) and its [help ladder](../learning-agent/skills/guided-coding/references/help-ladder.md) control how much solution detail it offers. Passing tests never substitute for the learner's explanation.
++Answer the task's debrief questions in a few sentences. For path C, compare
++the two attempts on what was produced, what was caught, how long it took, and
++where you had to intervene.
++
++Use [the handoff template](templates/LESSON_HANDOFF.md) for a PR description
++or a note to your mentor. At the end of a meaningful session you can record
++private reflection:
++
++```text
++Use finish-learning-session to record my reflection and next step.
++```
++
++Your private learning log and the task workspace stay out of Git. Share only
++what you choose to put in the handoff.
++
++## Sharing work
++
++Open pull requests against **your fork's** `main`, never the upstream
++repository. Task 08 covers this in detail, because `gh pr create` in a fork can
++default to the upstream repository.
+diff --git a/curriculum/fixtures/README.md b/curriculum/fixtures/README.md
+index bc9a3a8..1622b25 100644
+--- a/curriculum/fixtures/README.md
++++ b/curriculum/fixtures/README.md
+@@ -1,6 +1,6 @@
+ # Fictional Knowledge Assistant documents
+ 
+-These are synthetic source documents for lessons on keyword search, embeddings, retrieval, citation support, and evaluations. They describe a fictional organization and are not company policy. Keep their IDs stable so the same questions can be reused across tasks.
++These are synthetic source documents. They supply the business rules for the Northstar Desk baseline app and the handbook content for Task 10. They describe a fictional organization and are not company policy. Keep their IDs stable so the same questions can be reused across tasks.
+ 
+ Suggested baseline questions:
+ 
+@@ -10,4 +10,4 @@ Suggested baseline questions:
+ 4. How far ahead is vacation requested? Expected source: `D04`.
+ 5. What is the office Wi-Fi password? Expected behavior: insufficient evidence.
+ 
+-The learner should add tricky or ambiguous cases before claiming that semantic search or RAG is better than the keyword baseline.
++Add tricky or ambiguous cases before claiming that answer quality has improved.
+diff --git a/curriculum/starters/README.md b/curriculum/starters/README.md
+new file mode 100644
+index 0000000..57557e1
+--- /dev/null
++++ b/curriculum/starters/README.md
+@@ -0,0 +1,14 @@
++# Task starters
++
++Some tasks need a specific working-tree state that should not live in `main`.
++Each patch here is applied on a fresh branch from `main` with `git apply` and
++leaves its changes uncommitted.
++
++| Patch | Task | Leaves behind |
++|---|---|---|
++| `07-csv-export.patch` | [Task 07](../tasks/07-review-a-change.md) | A colleague's uncommitted change to review |
++| `08-messy-checkout.patch` | [Task 08](../tasks/08-ship-only-what-you-mean.md) | A finished feature mixed with unrelated local edits |
++
++Do not read a patch before doing its task; reviewing the change as it appears
++in your working tree is the exercise. CI checks that every patch still applies
++cleanly to `main`.
+diff --git a/curriculum/tasks/00-repository-product-shell.md b/curriculum/tasks/00-repository-product-shell.md
+deleted file mode 100644
+index 0ceeeb7..0000000
+--- a/curriculum/tasks/00-repository-product-shell.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 00 — Rails Starter + Product Shell
+-
+-**Module 1 — Product and network basics**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** Staff at fictional Northstar Demo need one place to ask questions about the supplied knowledge documents. This first version is only a product shell; no answer generation or saved conversation exists yet.
+-
+-**Required behavior:** A visitor can find where to ask a question and where knowledge documents will appear. Before any answer exists, the page explains that state clearly. Any clickable behavior that suggests an answer must be marked as simulated.
+-
+-**Acceptance check:** Show the page before a question is entered, then enter a question about expenses. The reviewer should be able to identify the question area, knowledge area, and mocked behavior without being shown a fabricated policy answer.
+-
+-**PoC assignment:** Create a tiny clickable shell for the future Knowledge Assistant: landing screen, question input, empty answer state, knowledge area. No real AI. Label mocked behaviour.
+-
+-**Rails:** Start in this bootable Rails repository. Run setup and inspect `bin/rails routes`, then add one root route, a simple Knowledge Assistant page, and a request test. Do not add document models, an AI SDK, or a model call yet.
+-
+-**Compare:** What did the clickable prototype tell you about the product? What did it tell you nothing about regarding Rails request flow, dependencies and tests?
+-
+-**Gate:** Trace browser → route → controller → view, explain how the Rails app starts, and show the new test passing.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/01-http-playground.md b/curriculum/tasks/01-http-playground.md
+deleted file mode 100644
+index fcaa076..0000000
+--- a/curriculum/tasks/01-http-playground.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 01 — HTTP Before AI
+-
+-**Module 1 — Product and network basics**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** A developer needs to inspect what an HTTP client sends and receives before using that mechanism for an AI request. The screen is a learning aid, not a general API client.
+-
+-**Required behavior:** The request view identifies method, URL, headers, optional JSON body, and timeout. The response view separates status, headers, raw body, and parsed JSON. An HTTP error and a timeout must be distinguishable.
+-
+-**Acceptance check:** Demonstrate one successful GET or POST and one timeout or HTTP error using a controlled mock or harmless test API. Explain which displayed values came from a real request and which were simulated.
+-
+-**PoC assignment:** Build an educational HTTP playground with GET/POST, URL, headers, JSON body and timeout. Display outgoing request, status, response headers, raw body, parsed JSON and separate HTTP-error/timeout states. Use a harmless test API or controlled mock.
+-
+-**Ruby:** Build an independent experiment under `standalone/` using `Net::HTTP`. Add JSON serialization/deserialization, headers, status handling, timeout and tests with the network boundary stubbed. Keep it small enough to reuse the mechanism in Task 02.
+-
+-**Compare:** Identify which process sends the request in the PoC and which process sends it in Ruby. Compare browser/backend constraints with `Net::HTTP`.
+-
+-**Gate:** Trace request → network boundary → response → JSON → Ruby object without using framework vocabulary as a substitute for explanation.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/01-read-before-you-touch.md b/curriculum/tasks/01-read-before-you-touch.md
+new file mode 100644
+index 0000000..880e268
+--- /dev/null
++++ b/curriculum/tasks/01-read-before-you-touch.md
+@@ -0,0 +1,91 @@
++# Task 01 — Read before you touch
++
++**Level 1 · Orientation** · Harness focus: `config-check`, `context.rb`,
++research-only scope · Size: 1–2 h
++
++## Why this task
++
++Before delegating anything, you need to know what the harness reads, where it
++keeps state, and what it will and will not do on a given request. This task
++changes no tracked files.
++
++## Starting point
++
++Branch `task-01-solo` or `task-01-harness` from `main`. No setup beyond the
++repository README.
++
++## Brief
++
++**Situation.** A new team member is about to follow the repository's setup
++instructions. Nobody has checked recently whether those instructions still
++match the repository.
++
++**Required outcome.** A short written report, kept outside Git (the task
++workspace, or a private note), containing:
++
++1. Each factual claim in the README's "First run: start the application"
++   section (tool versions, commands, database expectations), and for each
++   one the repository file that confirms or contradicts it.
++2. The harness state of this checkout: whether routing in `AGENTS.md` is
++   present, whether the skills are registered, whether the task workspace
++   directory is Git-ignored, and what the repository's default branch is,
++   with the evidence for that answer.
++3. Any discrepancy you found, with a suggested fix written as text, not applied.
++
++**Acceptance criteria.**
++
++- Every claim in the report cites a file, a command, or command output.
++- Facts and assumptions are labeled separately.
++- `git status` shows no tracked-file changes at the end.
++
++**Out of scope.** Fixing anything. That is a separate request.
++
++## Path A — on your own
++
++Read the README, `.ruby-version`, `Gemfile.lock`, `config/database.yml`,
++`AGENTS.md`, `.gitignore`, and `.agents/skills/`. Use plain Git to find the
++default branch (`git symbolic-ref refs/remotes/origin/HEAD`, `git remote show
++origin`).
++
++## Path B — via the harness
++
++```text
++Use config-check to check this repository's harness setup.
++```
++
++```text
++Research only, no file edits: compare every factual claim in the README's
++"First run: start the application" section with the repository files.
++Report each claim with its evidence and label anything you assumed.
++```
++
++Then run the context helper yourself and read its JSON:
++
++```sh
++ruby ai-harness/scripts/context.rb .
++```
++
++**Watch for.** If the agent edits a file to "fix" a discrepancy, that is a
++scope violation: a research request does not authorize edits. Record it and
++revert the edit. In a fresh fork, the context helper may report the default
++branch as unknown. Find out why before concluding anything.
++
++## Path C — both
++
++Do path A first and write your report. Then run path B and compare: which
++discrepancies did each find, and which claims did each mark as assumptions?
++
++## Done when
++
++- The report exists and meets the acceptance criteria.
++- `git status` is clean apart from ignored files.
++- You can explain where the harness stores task state and why that location
++  must be Git-ignored.
++
++## Debrief
++
++1. What did `config-check` report that you would not have checked yourself?
++2. Why does the harness leave the default branch unknown instead of assuming
++   `main`? What would go wrong if it assumed?
++3. If a teammate asked "is the setup guide correct?", which parts of your
++   answer are observed and which are inferred?
+diff --git a/curriculum/tasks/02-llm-request-explorer.md b/curriculum/tasks/02-llm-request-explorer.md
+deleted file mode 100644
+index 6444fb6..0000000
+--- a/curriculum/tasks/02-llm-request-explorer.md
++++ /dev/null
+@@ -1,25 +0,0 @@
+-# Task 02 — First LLM Request
+-
+-**Module 2 — Talking to a model**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** The team needs to see how a user message becomes a model request before connecting the product to a provider. The prototype may use example responses because provider access is not a condition for this review.
+-
+-**Required behavior:** A reviewer can change the system instruction, user message, and model selection, then inspect the resulting conceptual request separately from the response. Any sample response is labeled as such. Credentials must never appear in browser code or the displayed payload.
+-
+-**Acceptance check:** Change one input and show which part of the request changes. Show a mocked response and explain which request and response fields would need a real provider later.
+-
+-**PoC assignment:** Prototype an LLM request explorer. Inputs: system instruction, user message, model selector and safe mock configuration. Show the conceptual request payload and response separately. Use mocked model responses or a safe server-side integration, never a secret in browser code.
+-
+-**Ruby:** In `standalone/`, use the HTTP layer from Task 01 to make the first raw provider request. Read credentials from environment, build the payload explicitly, extract output and stub the provider in tests. Keep the raw code for comparison and reuse in Tasks 07–08.
+-
+-**Compare:** Which parts of the PoC were UI fiction? Which fields correspond to a real provider request? Where is the secret stored?
+-
+-**Strategist check:** Why use an LLM instead of deterministic Ruby for this behaviour?
+-
+-**Gate:** Explain input, payload, authentication, provider response and extracted application output.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/02-plan-dont-build.md b/curriculum/tasks/02-plan-dont-build.md
+new file mode 100644
+index 0000000..bcb21e0
+--- /dev/null
++++ b/curriculum/tasks/02-plan-dont-build.md
+@@ -0,0 +1,86 @@
++# Task 02 — Plan, don't build
++
++**Level 1 · Orientation** · Harness focus: `plan-work`, slices, open decisions
++· Size: 1–2 h
++
++## Why this task
++
++A plan is the cheapest place to catch a wrong approach. This task practises
++asking for a plan only, reading it critically, and owning the result. No
++application code is written.
++
++## Starting point
++
++Branch from `main`. Read [D02](../fixtures/D02-equipment.md) and look at the
++existing equipment report pages in the baseline app.
++
++## Brief
++
++**Situation.** Employees can already report a lost or damaged laptop. The IT
++desk has no way to act on those reports inside Northstar Desk, so decisions
++are made in chat and the reporter never hears back.
++
++**Required behavior (to be planned, not built).**
++
++- An IT desk member can see open equipment reports, oldest first.
++- For each report, the IT desk records one decision: replacement, repair, or
++  no action, with a short note.
++- The reporter can see the decision and note on their report.
++- Reports without an asset number are visibly flagged in the IT desk list.
++
++**Acceptance criteria for the plan.**
++
++- At least three slices, each with an observable result and a check that
++  could prove it (a test, a command, or a manual step).
++- The files or areas each slice touches.
++- A list of open decisions the brief does not settle, such as who counts as
++  the IT desk and whether a decision can be changed.
++- No changes to application code.
++
++**Out of scope.** Implementation, notifications, and asset inventory.
++
++## Path A — on your own
++
++Timebox 30–45 minutes. Write the plan in a private note using the same
++headings as the Plan section of `ai-harness/templates/workspace.md`.
++
++## Path B — via the harness
++
++```text
++Use plan-work for curriculum/tasks/02-plan-dont-build.md. Propose verifiable
++slices and list open decisions. Stop after planning.
++```
++
++Open `.ai-workspace/tasks/02/workspace.md` and read the plan there. Then push
++on it:
++
++```text
++Explain why the slices are in this order. Which slice could be shipped alone,
++and which depend on an open decision?
++```
++
++Edit the plan in the workspace yourself where you disagree. The plan is yours;
++the agent drafted it.
++
++**Watch for.** Slices without a concrete check, checks that only restate the
++slice, and open decisions the agent quietly resolved instead of listing.
++
++## Path C — both
++
++Write your plan first. Then run path B and compare the two: decisions only
++one of you raised, slice boundaries, and checks.
++
++## Done when
++
++- A plan meeting the acceptance criteria exists.
++- You have made at least three changes to the agent's draft (path B or C) and
++  can give a reason for each.
++- `git status` shows no application code changes.
++
++## Debrief
++
++1. Which open decision would have caused the most rework if made wrongly
++   during implementation?
++2. What makes a slice "verifiable" rather than just "small"?
++3. The plan sits in an ignored file. How would you share it with a reviewer
++   without committing the workspace?
+diff --git a/curriculum/tasks/03-first-hand-off.md b/curriculum/tasks/03-first-hand-off.md
+new file mode 100644
+index 0000000..922643d
+--- /dev/null
++++ b/curriculum/tasks/03-first-hand-off.md
+@@ -0,0 +1,84 @@
++# Task 03 — First hand-off
++
++**Level 1 · Orientation** · Harness focus: `implement-task` in autonomous
++mode, reading verification evidence · Size: 2–3 h
++
++## Why this task
++
++This is the first time the harness writes code. The change is small and fully
++specified on purpose, so you can concentrate on what the agent reports, how it
++verifies, and whether its evidence matches yours.
++
++## Starting point
++
++Branch from `main`. Read [D01](../fixtures/D01-expenses.md) and the expense
++claim model, list page, and claim page in the baseline app.
++
++## Brief
++
++**Situation.** Managers must approve expense claims above 200 demo credits,
++but nothing in Northstar Desk shows which claims need that. Finance keeps
++finding unapproved large claims late.
++
++**Required behavior.**
++
++- The claims list and the claim page show a "Needs manager approval" label on
++  every claim whose amount is greater than 200 credits and which has not been
++  approved.
++- A claim of exactly 200 credits does not show the label.
++- Once a claim is approved, the label no longer appears.
++
++**Acceptance criteria.**
++
++- Automated tests cover amounts of 199.99, 200.00, and 200.01, and an
++  approved claim above 200.
++- The full test suite and RuboCop pass.
++- The diff touches only what the behavior needs.
++
++**Out of scope.** The approval action itself, notifications, and styling
++beyond a readable label.
++
++## Path A — on your own
++
++Implement it, write the tests, and run the checks. Note how long it took and
++where you hesitated.
++
++## Path B — via the harness
++
++```text
++Use implement-task for curriculum/tasks/03-first-hand-off.md. Implement the
++brief, verify it, and stop at PR preparation.
++```
++
++This runs autonomously: the agent explains its approach, then proceeds. When
++it finishes:
++
++1. Read the Verification table in `.ai-workspace/tasks/03/workspace.md`. For
++   each line, decide whether it was actually run and shows real output.
++2. Read the full diff (`git diff main...` plus untracked files).
++3. Run `bin/rails test` and `bin/rubocop` yourself.
++
++**Watch for.** Verification lines describing expected results rather than
++observed ones. Where the 200-credit boundary lives: in one place, or repeated
++in the view and the model? Changes outside the brief, such as reformatting or
++"while I was here" improvements.
++
++## Path C — both
++
++Do path A first on `task-03-solo`, then path B on `task-03-harness`. Compare
++the diffs: where the rule lives, how the tests are written, and what each
++version would make easier or harder later.
++
++## Done when
++
++- The acceptance criteria are met on your branch.
++- You have re-run the checks yourself and compared them with the agent's
++  recorded results (path B or C).
++- A handoff note exists, using the [template](../templates/LESSON_HANDOFF.md).
++
++## Debrief
++
++1. Did the agent's recorded verification match what you observed? If not,
++   what was different?
++2. Where in the code is "greater than 200" decided, and why there?
++3. What, if anything, would you have rejected in review?
+diff --git a/curriculum/tasks/03-prompt-laboratory.md b/curriculum/tasks/03-prompt-laboratory.md
+deleted file mode 100644
+index 216525e..0000000
+--- a/curriculum/tasks/03-prompt-laboratory.md
++++ /dev/null
+@@ -1,25 +0,0 @@
+-# Task 03 — Prompt Laboratory
+-
+-**Module 2 — Talking to a model**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** The team wants to compare two prompt versions on the same examples rather than judge a single attractive response. The PoC should make the comparison process understandable before the Ruby experiment is run.
+-
+-**Required behavior:** Each variant uses the same visible input set. Results remain associated with their input and prompt version, and the reviewer can record an observation about a difference. Mocked outputs are identified.
+-
+-**Acceptance check:** Show one input where the variants differ and describe what the screen lets a reviewer observe. Do not claim that the UI alone proves one prompt is more reliable.
+-
+-**PoC assignment:** Build a prompt comparison screen. One input dataset, two prompt variants, side-by-side results and a small observation form. Mock outputs if necessary.
+-
+-**Ruby:** Separate system/user inputs and model configuration. Create prompt v1 deliberately and document why it is structured that way. Run it on a fixed dataset. Identify one concrete weakness, write a hypothesis, create v2, then run both versions against the same examples and compare them.
+-
+-**Required experiment:** Use the [prompt experiment template](../templates/PROMPT_EXPERIMENT.md). The conclusion must identify which change was intended to affect which behaviour and what evidence was observed.
+-
+-**Compare:** Did the attractive side-by-side UI make the comparison scientifically meaningful? What controls are needed for a useful experiment?
+-
+-**Gate:** Explain why one good response is not evidence that a prompt is reliable.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/04-approve-the-plan-first.md b/curriculum/tasks/04-approve-the-plan-first.md
+new file mode 100644
+index 0000000..eb3f594
+--- /dev/null
++++ b/curriculum/tasks/04-approve-the-plan-first.md
+@@ -0,0 +1,83 @@
++# Task 04 — Approve the plan first
++
++**Level 2 · Steering** · Harness focus: `plan-review` involvement · Size: 3–4 h
++
++## Why this task
++
++Autonomous mode is fine for small, clear changes. For anything with design
++choices, you want to see the plan before code exists. This task practises
++reviewing a concrete plan, changing it, and checking that the implementation
++follows what you approved.
++
++## Starting point
++
++Branch from `main`. Read [D04](../fixtures/D04-vacation.md) and the vacation
++request model and pages in the baseline app.
++
++## Brief
++
++**Situation.** Employees can submit vacation requests, but managers approve
++them by message and nobody can see who is away. The policy says a request
++appears on the team calendar only after the manager approves it.
++
++**Required behavior.**
++
++- A manager sees pending vacation requests from their direct reports and can
++  approve or reject each one.
++- A manager cannot act on requests from people who do not report to them, and
++  nobody can approve their own request.
++- A team calendar page lists approved vacations for the acting user's team,
++  grouped by week. Pending and rejected requests do not appear.
++- The requester can see whether their request is pending, approved, or
++  rejected.
++
++**Acceptance criteria.**
++
++- Tests cover approval, rejection, both authorization rules, and calendar
++  contents (approved shown, pending and rejected not shown).
++- The full test suite and RuboCop pass.
++
++**Out of scope.** Emergency leave, notifications, editing a decision, and a
++graphical calendar. A list grouped by week is enough.
++
++## Path A — on your own
++
++Write a short plan before coding: slices, where authorization is enforced, and
++how the calendar query works. Then implement it.
++
++## Path B — via the harness
++
++```text
++Use implement-task for curriculum/tasks/04-approve-the-plan-first.md with
++plan-review involvement. Wait for my review of the plan before writing code.
++```
++
++When the plan arrives, review it properly before replying. **You must request
++at least one substantive change** before approving. For example, where the
++authorization check lives, how "team" is defined, or how slices are split.
++Write down what you changed and why.
++
++After implementation, compare the code with the plan you approved.
++
++**Watch for.** Approving a plan you skimmed. An implementation that drifts from
++the approved plan without recording why in the workspace's "Plan changes and
++reasons". Authorization enforced only in the view.
++
++## Path C — both
++
++Write your own plan first (path A, planning only). Then run path B and compare
++your plan with the agent's before you review it. Implement either version.
++
++## Done when
++
++- The acceptance criteria are met.
++- The workspace shows the plan you approved and any later changes with
++  reasons (path B or C).
++- You can point to the place in the code where each authorization rule is
++  enforced.
++
++## Debrief
++
++1. What did you change in the plan, and did the final code honor it?
++2. What would autonomous mode have cost or saved on this task?
++3. Which part of the plan did you accept without being able to judge it?
+diff --git a/curriculum/tasks/04-failure-state-simulator.md b/curriculum/tasks/04-failure-state-simulator.md
+deleted file mode 100644
+index bbe1456..0000000
+--- a/curriculum/tasks/04-failure-state-simulator.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 04 — Reliability and Failure States
+-
+-**Module 3 — Reliability and context**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** A person asking a question needs a useful response even when the provider does not return a usable answer. Different failures require different explanations and next actions.
+-
+-**Required behavior:** The prototype can simulate success, timeout, authentication failure, rate limiting, server failure, malformed JSON, and an empty model output. It must show which state occurred without treating all failures as a generic empty answer.
+-
+-**Acceptance check:** Trigger a timeout, a 429 response, and an empty model output. The reviewer should see distinct states and know whether retrying, waiting, or reporting the problem makes sense.
+-
+-**PoC assignment:** Create controls that simulate success, timeout, 401, 429, 500, malformed JSON and empty model output. Design distinct user states.
+-
+-**Ruby:** Implement those failure boundaries and tests. Decide retryable vs non-retryable failures and application-facing error types.
+-
+-**Compare:** Lovable can display a timeout state without experiencing a real timeout. What must the backend actually detect?
+-
+-**Gate:** Distinguish network failure, HTTP failure, malformed provider response and valid-but-useless model output.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/05-context-visualizer.md b/curriculum/tasks/05-context-visualizer.md
+deleted file mode 100644
+index f580197..0000000
+--- a/curriculum/tasks/05-context-visualizer.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 05 — Conversation and Context
+-
+-**Module 3 — Reliability and context**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** Users may assume a model remembers the entire conversation. The team needs a way to show which messages will be sent on the next request and what happens when the context becomes too large.
+-
+-**Required behavior:** The next-request view reflects included and excluded messages. Reset, truncation, and summary choices visibly change that view, and a simple budget indicator shows when space is limited. Any summary behavior that is mocked must be labeled.
+-
+-**Acceptance check:** Start with several messages, exclude one, then choose a context-reduction option. Show the exact visible difference in what would be sent next.
+-
+-**PoC assignment:** Visualize a conversation as messages that can be included/excluded from the next model request. Show a simple context-budget indicator and reset/truncate/summarize options.
+-
+-**Ruby:** Build CLI conversation history with roles, context construction, reset and a simple truncation/summary strategy.
+-
+-**Compare:** What looked like 'memory' in the UI? What data must actually be resent to the model?
+-
+-**Gate:** Explain why an LLM does not automatically remember the previous CLI request.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/05-reproduce-then-fix.md b/curriculum/tasks/05-reproduce-then-fix.md
+new file mode 100644
+index 0000000..1fd68ba
+--- /dev/null
++++ b/curriculum/tasks/05-reproduce-then-fix.md
+@@ -0,0 +1,84 @@
++# Task 05 — Reproduce, then fix
++
++**Level 2 · Steering** · Harness focus: bug workflow, a `step-review`
++checkpoint after reproduction · Size: 2–3 h
++
++## Why this task
++
++A fix without a reproduction proves nothing. The harness contract says to
++reproduce a bug before fixing it when practical; this task makes you check
++that it really did, and that the failing test fails for the right reason.
++
++## Starting point
++
++Branch from `main`. Read [D01](../fixtures/D01-expenses.md) and the expense
++claim validations in the baseline app.
++
++## Brief
++
++**Bug report from Finance.**
++
++> Two problems with expense claim submission. First, a claim submitted exactly
++> 30 days after the purchase date is rejected, but the policy says claims are
++> accepted within 30 days. Second, someone submitted a claim with a purchase
++> date next week and it was accepted.
++
++**Expected behavior.**
++
++- A claim submitted on day 30 after purchase is accepted.
++- A claim submitted on day 31 is rejected with a clear validation message.
++- A claim with a purchase date in the future is rejected with a clear
++  validation message.
++
++**Acceptance criteria.**
++
++- For each of the two problems, a test that fails on `main` is written first,
++  and its failing output is recorded before any fix.
++- After the fix, those tests pass, as do the full suite and RuboCop.
++- The diff contains no unrelated changes.
++
++**Out of scope.** Other validation rules and changes to the 30-day policy.
++
++## Path A — on your own
++
++Write the failing tests first and save their output. Find the cause, fix it,
++and re-run.
++
++## Path B — via the harness
++
++```text
++Use implement-task for curriculum/tasks/05-reproduce-then-fix.md with
++step-review involvement. First checkpoint: stop after you have failing tests
++that reproduce both problems, and show me the actual failure output.
++```
++
++At the checkpoint, read the failing tests and the output. Ask yourself whether
++each test fails because of the bug, or for some other reason such as a typo,
++a missing fixture, or a wrong expectation. Only then let it continue:
++
++```text
++The reproduction is correct. Continue with the fix and verify it.
++```
++
++**Watch for.** A "reproduction" that was never run. A test that would also
++pass with the bug still present. A fix that changes the test's expectations
++instead of the code. Date and time edge cases: what does "day 30" mean around
++midnight or in a different time zone?
++
++## Path C — both
++
++Do path A first, keeping your failing output. Then run path B and compare the
++root cause each of you identified.
++
++## Done when
++
++- The failing output from before the fix is recorded (workspace or handoff).
++- The acceptance criteria are met.
++- You can state the root cause of each problem in one sentence.
++
++## Debrief
++
++1. What was the root cause, and how did the failing test point to it?
++2. How did you confirm the test failed for the right reason?
++3. Was the step-review checkpoint worth the interruption here? When would it
++   not be?
+diff --git a/curriculum/tasks/06-rails-shell.md b/curriculum/tasks/06-rails-shell.md
+deleted file mode 100644
+index 20287a8..0000000
+--- a/curriculum/tasks/06-rails-shell.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 06 — Bring the Product Into Rails
+-
+-**Module 4 — Rails vertical slice**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** Northstar Demo staff need to find the fictional knowledge documents and keep questions organized by conversation. The existing product shell should now describe the path from browsing a document to recording a question.
+-
+-**Required behavior:** The PoC shows document browsing, a conversation list, a question entry flow, and empty states when no documents, conversations, or messages exist. It does not claim to generate a real answer or persist data unless that behavior is actually connected.
+-
+-**Acceptance check:** Open a fictional document, start a conversation, and enter a question. Explain which parts of the flow are simulated and which data the later Rails implementation must store.
+-
+-**PoC assignment:** Refine the existing Knowledge Assistant workflow: fictional knowledge documents, conversation list, question flow, and empty states. Still no need for real AI.
+-
+-**Rails:** Extend the existing Rails starter in small PRs. First create and display fictional `KnowledgeDocument` records from `curriculum/fixtures/`. Then add `Conversation` and `Message` persistence plus a question form that records a user message without calling a model. Add focused model and request tests. Do not build search, embeddings, or AI answers here.
+-
+-**Compare:** Extract entities, state transitions and validations from the prototype. Record what the prototype hid about persistence and source ownership.
+-
+-**Gate:** Explain browser → route → controller → model/database → response/view for both viewing a document and recording a question. Show tests for each PR.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/06-stop-and-resume.md b/curriculum/tasks/06-stop-and-resume.md
+new file mode 100644
+index 0000000..10700df
+--- /dev/null
++++ b/curriculum/tasks/06-stop-and-resume.md
+@@ -0,0 +1,97 @@
++# Task 06 — Stop and resume
++
++**Level 2 · Steering** · Harness focus: the task workspace, `status`, resuming
++in a fresh session · Size: 3–4 h, split across two sessions
++
++## Why this task
++
++Real tasks span days, people, and broken sessions. The harness keeps
++operational state in a workspace file so work can be picked up later. This
++task deliberately interrupts the work and checks whether the resumed agent
++compares saved state with the actual code instead of trusting its notes.
++
++## Starting point
++
++Branch from `main`. Read [D03](../fixtures/D03-incidents.md) and the incident
++model and page in the baseline app.
++
++## Brief
++
++**Situation.** The on-call engineer must record an incident timeline, but
++Northstar Desk only stores the incident itself. Timelines end up in chat and
++are lost.
++
++**Required behavior.**
++
++1. On an incident's page, the on-call engineer can add timeline entries. Each
++   entry has a time (defaulting to now) and a short description. Entries show
++   in time order.
++2. When an incident lead is named or changed, a timeline entry recording it is
++   added automatically.
++3. Once an incident is resolved, its timeline is read-only. No entries can be
++   added through the page or the model.
++
++**Acceptance criteria.**
++
++- Tests cover each of the three behaviors, including that a resolved
++  incident's timeline rejects new entries at the model level.
++- The full test suite and RuboCop pass.
++
++**Out of scope.** Editing or deleting entries, notifications, and the
++post-incident review.
++
++## Path A — on your own
++
++Do behavior 1 in one session. Stop. In a later session, before writing
++anything, write down from memory where you were. Then check the code and
++finish behaviors 2 and 3.
++
++## Path B — via the harness
++
++Session one:
++
++```text
++Use implement-task for curriculum/tasks/06-stop-and-resume.md with
++step-review involvement. Checkpoints after each of the three behaviors.
++```
++
++When behavior 1 is verified at its checkpoint, **close the agent session
++completely.** Before the next session, make one small manual change yourself
++that affects the work. For example, rename the timeline entry's description
++attribute, or add a test the agent did not write. Commit it or leave it
++uncommitted; note which.
++
++Session two, in a fresh agent session:
++
++```text
++Use status for Task 06. Identify the next unresolved action.
++```
++
++Compare the status report with reality. Then:
++
++```text
++Use implement-task to resume Task 06 from its existing workspace.
++```
++
++**Watch for.** Whether `status` or the resumed run notices your manual change,
++or carries on from stale notes. Whether the workspace's "Resume here" section
++was precise enough to continue from.
++
++## Path C — both
++
++Do path A, then path B on a separate branch, and compare how well you resumed
++from memory with how well the agent resumed from its workspace.
++
++## Done when
++
++- The acceptance criteria are met.
++- The status output from session two is saved in the handoff.
++- You can say whether the resumed agent detected your manual change, and how
++  you can tell.
++
++## Debrief
++
++1. What did `status` get right and wrong about where the work stood?
++2. What would you add to the workspace so that a teammate, not just the
++   agent, could take over?
++3. Where else in your real work would a resumable task record help?
+diff --git a/curriculum/tasks/07-real-ask-flow.md b/curriculum/tasks/07-real-ask-flow.md
+deleted file mode 100644
+index 80f6fea..0000000
+--- a/curriculum/tasks/07-real-ask-flow.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 07 — Real Ask Flow
+-
+-**Module 4 — Rails vertical slice**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** A Northstar Demo employee who submits a question needs to know whether the request is still being processed, has produced an answer, or has failed. Their submitted question should remain visible in each state.
+-
+-**Required behavior:** The ask flow has pending, answer, and provider-failure states. A simulated answer must be labeled, and an error must not look like a valid answer. This task does not yet promise that an answer is grounded in the knowledge documents.
+-
+-**Acceptance check:** Submit a question, show a pending state, then demonstrate both an answer and a provider failure. Identify the data the Rails service must save for each outcome.
+-
+-**PoC assignment:** Prototype the complete ask experience including pending, answer and provider-failure states. Mark the AI response as simulated unless a safe backend exists.
+-
+-**Rails:** Reuse the raw model interaction explored in Task 02 behind an explicit service: persisted user message → model call → persisted assistant response → UI. Keep provider code out of model callbacks and controllers. Test with a fake provider; no real key is needed in tests.
+-
+-**Compare:** Which UI states required new backend states or error handling?
+-
+-**Gate:** Trace the full real request and justify the service boundary.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/07-review-a-change.md b/curriculum/tasks/07-review-a-change.md
+new file mode 100644
+index 0000000..1ba3600
+--- /dev/null
++++ b/curriculum/tasks/07-review-a-change.md
+@@ -0,0 +1,98 @@
++# Task 07 — Review a change you didn't write
++
++**Level 3 · Quality gates** · Harness focus: `self-review`,
++`writing-code-comments` · Size: 2–3 h
++
++## Why this task
++
++An agent's review is a second opinion, not a verdict. This task gives you a
++change written by someone else, with real problems in it, and asks you to
++review it, use the harness review, and decide which findings are true.
++
++## Starting point
++
++```sh
++git switch main
++git switch -c task-07-review
++git apply curriculum/starters/07-csv-export.patch
++```
++
++The patch leaves the change uncommitted in your working tree, as if a
++colleague had handed you their branch. Do not read its commit history or
++search for answers. The point is to find the problems yourself.
++
++## Brief
++
++**The change claims to implement:**
++
++> Managers can download their team's expense claims as a CSV file from the
++> claims list. The file has one row per claim with the employee name, purchase
++> date, amount, description, and approval status. Only a manager's direct
++> reports' claims are included. Employees who are not managers do not see the
++> download.
++
++**Your job.** Review the change against that requirement and the existing
++code. For each finding, record:
++
++- what is wrong, with file and line;
++- severity: must fix, should fix, or nit;
++- evidence: a reproduction, a failing test, or a reasoned reading of the code.
++
++Then fix the most severe finding, with a test that would have caught it.
++
++**Acceptance criteria.**
++
++- A findings list in the format above.
++- At least one must-fix finding fixed, with a test that fails without the fix.
++- A re-review of the fixed state, recorded against the new revision.
++
++**Out of scope.** Rewriting the feature. Fix one finding properly instead of
++patching all of them roughly.
++
++## Path A — on your own
++
++Timebox 45 minutes for the review. Read the diff (`git diff`, `git status` for
++new files), run the tests, and try the feature in the browser as different
++employees.
++
++## Path B — via the harness
++
++```text
++Use self-review for the current changes against the requirement in
++curriculum/tasks/07-review-a-change.md.
++```
++
++```text
++Use writing-code-comments to review comments touched by this change.
++```
++
++Triage every harness finding as **confirmed**, **false positive**, or
++**unsure**, and say how you decided. Then fix one must-fix finding:
++
++```text
++Fix <finding> with a test that fails before the fix, then use self-review
++again on the updated changes.
++```
++
++**Watch for.** Findings with no evidence. Findings that are true but
++irrelevant to the requirement. A second review that reuses the first review's
++conclusions instead of looking at the new revision.
++
++## Path C — both
++
++Review on your own first and save your list. Then run path B. Compare: what
++you found that the harness missed, what it found that you missed, and its
++false positives.
++
++## Done when
++
++- The acceptance criteria are met.
++- Each harness finding is triaged (path B or C).
++- You can explain the most severe problem to the "author" in two sentences.
++
++## Debrief
++
++1. Which problem would have caused the most damage in production, and why?
++2. What did the harness miss, and why might it have missed it?
++3. How did the review record what was reviewed, and why does that matter
++   after further edits?
+diff --git a/curriculum/tasks/08-rubyllm-abstraction.md b/curriculum/tasks/08-rubyllm-abstraction.md
+deleted file mode 100644
+index 15aa7ba..0000000
+--- a/curriculum/tasks/08-rubyllm-abstraction.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 08 — Abstraction and RubyLLM
+-
+-**Module 5 — Abstractions and contracts**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** The team wants the Knowledge Assistant's ask experience to remain understandable if the underlying model provider changes. Provider selection is a technical concern; the user's basic question and answer flow should stay recognizable.
+-
+-**Required behavior:** The same question can be shown with Provider A and Provider B while the visible product contract stays stable. Provider-specific details may be exposed in an inspector, but the PoC must identify any mocked differences.
+-
+-**Acceptance check:** Switch between the two providers for one question. Point out what the user sees in both cases and what the later Ruby abstraction must handle behind that screen.
+-
+-**PoC assignment:** Build a conceptual provider-switching screen showing the same product behaviour with Provider A/B. The purpose is to expose the desired contract, not provider internals.
+-
+-**Rails/Ruby:** Introduce RubyLLM. Preserve behaviour/tests. Compare the raw implementation with RubyLLM and write an ADR.
+-
+-**Compare:** What complexity disappeared? What complexity still exists but became hidden?
+-
+-**Gate:** Point to the earlier raw implementation and explain what RubyLLM abstracts.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/08-ship-only-what-you-mean.md b/curriculum/tasks/08-ship-only-what-you-mean.md
+new file mode 100644
+index 0000000..d14cccf
+--- /dev/null
++++ b/curriculum/tasks/08-ship-only-what-you-mean.md
+@@ -0,0 +1,92 @@
++# Task 08 — Ship only what you mean
++
++**Level 3 · Quality gates** · Harness focus: `create-pr`, scoped staging,
++publication authority · Size: 1–2 h
++
++## Why this task
++
++Most bad PRs are not bad code. They contain a debug line, a local config
++tweak, or half of another change. This task gives you a messy working tree and
++asks you to publish exactly one change as a draft PR to your fork, leaving
++everything else untouched.
++
++## Starting point
++
++```sh
++git switch main
++git switch -c task-08-severity-filter
++git apply curriculum/starters/08-messy-checkout.patch
++```
++
++After applying, your working tree contains a finished, tested feature (an
++incident list filter by severity) mixed with unrelated local edits and a
++scratch file. Run `git status` and `git diff` to see the state.
++
++## Brief
++
++**Required outcome.** A draft pull request in **your fork** that:
++
++- contains only the incident severity filter and its tests;
++- targets your fork's `main`;
++- uses the repository's PR template, with a title, a short description, and
++  verification results you actually observed.
++
++**Also required.** After the PR is created, every unrelated edit and the
++scratch file are still in your working tree, unchanged and uncommitted.
++
++**Acceptance criteria.**
++
++- The PR's file list contains only severity-filter files.
++- The PR's base repository is your fork, not the upstream repository.
++- `git status` after publishing still shows the unrelated edits.
++- No blanket staging (`git add .`, `git add -A`, `git commit -a`) was used.
++
++**Out of scope.** Changing the feature, or cleaning up the unrelated edits.
++
++## Path A — on your own
++
++Stage by path or hunk (`git add -p`), commit, push, and open a draft PR with
++`gh pr create --draft --repo <your-user>/<your-fork>`, or through the GitHub
++web interface.
++
++## Path B — via the harness
++
++Prepare first, publish second:
++
++```text
++Use create-pr to prepare a PR description for the incident severity filter
++changes.
++```
++
++Check the proposed file set, base, branch, title, and body. Correct anything
++wrong in plain words. Then:
++
++```text
++Use create-pr to create a draft PR for the agreed incident severity filter
++changes, against my fork's main.
++```
++
++That second request authorizes scoped commits, a normal push, and PR creation.
++It does not authorize merging, force-pushing, or messaging anyone.
++
++**Watch for.** `gh` defaulting to the upstream repository in a fork; check the
++PR URL before celebrating. The scratch file or a debug line in the proposed
++file set. Verification in the PR body that was not run in this session.
++
++## Path C — both
++
++Do path A as far as staging, then save the staged file list with `git diff
++--cached --name-only` and your draft PR text. Unstage with `git restore
++--staged .` (this keeps your working tree), then run path B. Compare file
++lists and PR bodies before publishing either.
++
++## Done when
++
++- The acceptance criteria are met and the PR URL is in your handoff.
++- You can show `git status` output from after publication.
++
++## Debrief
++
++1. Which unrelated edit was easiest to include by accident, and why?
++2. What exactly did "create a draft PR" authorize, and what did it not?
++3. How would you have noticed if the PR had gone to the upstream repository?
+diff --git a/curriculum/tasks/09-structured-output.md b/curriculum/tasks/09-structured-output.md
+deleted file mode 100644
+index 8cd2bf1..0000000
+--- a/curriculum/tasks/09-structured-output.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 09 — Structured Output
+-
+-**Module 5 — Abstractions and contracts**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** Product code may need specific fields from a model response, such as the question's intent or whether the answer is uncertain. A persuasive paragraph is not enough when another part of the application depends on those fields.
+-
+-**Required behavior:** A free-text answer and a structured representation can be inspected separately. The card shows fields such as intent, answer type, and uncertainty, and it has an explicit state when a field is missing or invalid.
+-
+-**Acceptance check:** Show a complete example and one missing-field example. Explain what a reviewer can observe in the UI and what validation the Ruby or Rails implementation must still perform.
+-
+-**PoC assignment:** Show free-text output beside a structured card with fields such as intent, answer type and uncertainty. Include an invalid/missing-field state.
+-
+-**Rails/Ruby:** Define a structured output contract/schema, validate it, handle invalid responses and test it.
+-
+-**Compare:** A card can always look structured. What guarantees that the underlying model output satisfies the contract?
+-
+-**Gate:** Explain why product code should not rely on persuasive prose when it needs machine-readable behaviour.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/09-two-tracks-at-once.md b/curriculum/tasks/09-two-tracks-at-once.md
+new file mode 100644
+index 0000000..c7545b5
+--- /dev/null
++++ b/curriculum/tasks/09-two-tracks-at-once.md
+@@ -0,0 +1,102 @@
++# Task 09 — Two tracks at once
++
++**Level 3 · Quality gates** · Harness focus: `worktree-create`, stacked
++branches and PRs · Size: 3–4 h
++
++## Why this task
++
++Real work rarely arrives one change at a time. This task runs two independent
++changes in parallel and stacks a third on one of them, each in its own
++isolated checkout, so nothing leaks between them.
++
++## Starting point
++
++Start from `main`. Read [D02](../fixtures/D02-equipment.md),
++[D04](../fixtures/D04-vacation.md), and the equipment report and vacation
++request code in the baseline app.
++
++## Brief
++
++Three changes, each delivered as its own branch and draft PR in your fork:
++
++**A — Asset numbers (base: `main`).** Equipment reports get an optional asset
++number. When present it must match `NS-` followed by six digits (for example
++`NS-004211`); otherwise the form shows a validation error. The asset number
++appears on the report page and in the reports list.
++
++**B — Find by asset number (base: branch A).** On the equipment reports list,
++an IT desk member can search by asset number. An exact match shows that
++report; no match shows a clear empty state. B is stacked on A, so its PR
++targets A's branch, not `main`.
++
++**C — Vacation list order (base: `main`).** The acting employee's vacation
++requests are listed with the soonest start date first. Currently the order is
++undefined.
++
++**Acceptance criteria.**
++
++- Three branches; A and C based on `main`, B based on A.
++- Three draft PRs in your fork. B's PR targets A's branch, and each PR's diff
++  contains only its own change.
++- Each change has tests; the suite and RuboCop pass in each checkout.
++- `git worktree list` shows separate checkouts were used for at least A and C
++  while both were in progress.
++
++**Stretch.** After opening B, make a review change on A (for example, improve
++the validation message). Bring B up to date with A and confirm B's PR still
++shows only B's change.
++
++**Out of scope.** Asset inventory, partial-match search, and vacation
++filtering.
++
++## Path A — on your own
++
++```sh
++git worktree add ../desk-a -b task-09-asset-numbers main
++git worktree add ../desk-c -b task-09-vacation-order main
++```
++
++Create B from A once A has a commit. Open PRs with `gh pr create --draft
++--base <branch> --repo <your-fork>`.
++
++## Path B — via the harness
++
++```text
++Use worktree-create to create an isolated checkout for change A in
++curriculum/tasks/09-two-tracks-at-once.md, based on main.
++```
++
++```text
++Use worktree-create to create an isolated checkout for change C in
++curriculum/tasks/09-two-tracks-at-once.md, based on main.
++```
++
++Start a separate agent session in each returned directory and run
++`implement-task` there for that change only. When A has a commit:
++
++```text
++Use worktree-create to create an isolated checkout for change B, stacked on
++the change A branch.
++```
++
++**Watch for.** A new worktree contains only committed files. Task workspaces
++under `.ai-workspace/tasks/` are per checkout, and an uncommitted harness setup
++does not follow you into the new directory. B's PR base silently defaulting to
++`main`, which would show A's changes in B's diff.
++
++## Path C — both
++
++Do A and C on your own in worktrees, then B through the harness, or the other
++way round. Compare how much of your attention went to Git bookkeeping in each.
++
++## Done when
++
++- The acceptance criteria are met; the three PR URLs and `git worktree list`
++  output are in your handoff.
++- You can explain what happens to B when A is merged into `main`.
++
++## Debrief
++
++1. What would have gone wrong doing A and C in one checkout?
++2. How do you keep a stacked branch correct when its base changes?
++3. When is a stack the wrong choice, and one larger PR the right one?
+diff --git a/curriculum/tasks/10-model-behind-a-boundary.md b/curriculum/tasks/10-model-behind-a-boundary.md
+new file mode 100644
+index 0000000..b5c1064
+--- /dev/null
++++ b/curriculum/tasks/10-model-behind-a-boundary.md
+@@ -0,0 +1,104 @@
++# Task 10 — A model behind a boundary
++
++**Level 4 · Judgment** · Harness focus: verifying work the agent cannot fully
++check; honest "Not run" evidence; keeping secrets out of state · Size: 4–6 h
++
++## Why this task
++
++When a feature calls a language model, tests with a fake provider prove the
++plumbing, not the answers. The agent cannot observe answer quality without a
++real call, and it must not invent results. This task separates what was
++verified from what was assumed, and keeps credentials out of code,
++workspaces, and logs.
++
++## Starting point
++
++Branch from `main`. Read [the fixtures README](../fixtures/README.md), the
++four fixture documents, and the Handbook page in the baseline app. A model
++provider key is optional. Without one you can still complete everything
++except the live evaluation.
++
++## Brief
++
++**Situation.** Employees ask the same policy questions repeatedly. Northstar
++Desk should answer them from the handbook, and be honest when the handbook
++doesn't say.
++
++**Required behavior.**
++
++- On the Handbook page, an employee can ask a question.
++- The answer uses only the four fixture documents and names the document ID
++  it relied on (for example `D01`).
++- When no document supports an answer, the response says so plainly instead
++  of guessing. The fixtures README's Wi-Fi question is the reference case.
++- A provider failure or timeout shows an error state that cannot be mistaken
++  for an answer.
++- All provider code sits behind one service object. Controllers and models
++  never call the provider directly.
++- The provider key comes from an environment variable or Rails credentials.
++  It never appears in Git, logs, task workspaces, or the PR.
++
++**Acceptance criteria.**
++
++- Automated tests use a fake provider and cover: the documents are included in
++  the request; a cited document ID is shown; the insufficient-evidence path;
++  the provider-error path. No key is needed to run them.
++- A small evaluation script runs the five baseline questions from the fixtures
++  README against a real provider and prints, for each question, the answer,
++  the cited ID, and whether it matches the expected source or behavior.
++- If you have no key, the evaluation is recorded as **Not run**, with the
++  reason.
++- The suite and RuboCop pass.
++
++**Out of scope.** Embeddings, vector search, chunking, and conversation
++history. Four short documents fit in one request.
++
++## Path A — on your own
++
++Design the service boundary and the fake first, then the prompt, then the
++page. Use the [prompt experiment template](../templates/PROMPT_EXPERIMENT.md)
++if you change the prompt substantially.
++
++## Path B — via the harness
++
++```text
++Use implement-task for curriculum/tasks/10-model-behind-a-boundary.md with
++plan-review involvement.
++```
++
++At plan review, check how the plan separates plumbing tests from the live
++evaluation, and where the key is read. After implementation, read the
++Verification table line by line and sort each claim into one of three groups:
++
++- **observed:** a command was run here and its output is shown;
++- **not run:** honestly marked, with a reason;
++- **asserted:** described as working without evidence.
++
++Run the evaluation yourself if you have a key, and compare your results with
++anything the agent claimed about answer quality.
++
++**Watch for.** Claims that the assistant "answers correctly" based only on
++fake-provider tests. A key, or part of one, appearing in the workspace,
++terminal output pasted into it, or the PR body. Tests that call the real
++provider.
++
++## Path C — both
++
++Build the service boundary and fake yourself (path A), then hand the page and
++evaluation script to the harness, or the reverse. Compare where each of you
++drew the boundary.
++
++## Done when
++
++- The acceptance criteria are met.
++- Your handoff lists which claims about the feature are observed, not run, and
++  assumed.
++- `git log -p` and `.ai-workspace/tasks/10/` contain no secret.
++
++## Debrief
++
++1. What do the fake-provider tests prove, and what do they not?
++2. Did any agent output claim more than its evidence supported? How did you
++   spot it?
++3. What would you need before anyone used this with real company documents?
++   See [the internal-use gate](../INTERNAL_USE_GATE.md).
+diff --git a/curriculum/tasks/10-tool-calling.md b/curriculum/tasks/10-tool-calling.md
+deleted file mode 100644
+index c2b1c20..0000000
+--- a/curriculum/tasks/10-tool-calling.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 10 — Tool Calling
+-
+-**Module 6 — Actions and slow work**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** The assistant may propose a controlled action, such as looking up a fictional knowledge document. The application must show the proposed action before treating it as authorized or complete.
+-
+-**Required behavior:** The PoC displays the requested tool, its arguments, an approval or denial step for that action, and the resulting output or refusal. Arguments remain visible for inspection. All execution in the PoC is simulated unless a safe, scoped backend exists.
+-
+-**Acceptance check:** Show a valid read-only lookup and a denied or invalid request. The reviewer should be able to distinguish the model's proposal from the application's decision to execute it.
+-
+-**PoC assignment:** Simulate a model requesting one of a few safe tools. Show proposed tool name/arguments and an approval/result step.
+-
+-**Rails/Ruby:** Implement one or more tightly scoped tools, argument validation, authorization boundary and audit trail. No arbitrary shell/SQL/network tool.
+-
+-**Compare:** What is merely a UI action in the prototype versus executable authority in the backend?
+-
+-**Gate:** Explain why model-generated tool arguments are untrusted input.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/11-background-work.md b/curriculum/tasks/11-background-work.md
+deleted file mode 100644
+index dc2fa6e..0000000
+--- a/curriculum/tasks/11-background-work.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 11 — Async Work
+-
+-**Module 6 — Actions and slow work**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** Some AI operations take long enough that a user cannot wait on a blank page. They need to know whether work has started, is still running, is being retried, has completed, or has failed.
+-
+-**Required behavior:** The PoC distinguishes immediate acknowledgement, pending, completed, retrying, and failed states. It gives the user a way to understand the current state without implying that a simulated transition reflects a real background job.
+-
+-**Acceptance check:** Walk through a successful operation and a retry that ends in failure. Explain which state changes would need to be persisted or reported by Rails.
+-
+-**PoC assignment:** Prototype immediate, pending, completed, retrying and failed states for a slow AI operation.
+-
+-**Rails:** Move appropriate work to Active Job. Add job status, idempotency strategy, retry policy and UI feedback.
+-
+-**Compare:** The prototype changes state instantly because you told it to. What produces and persists those states in Rails?
+-
+-**Gate:** Explain when background execution improves the system and when it only adds complexity.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/11-make-the-harness-fit.md b/curriculum/tasks/11-make-the-harness-fit.md
+new file mode 100644
+index 0000000..050cfdb
+--- /dev/null
++++ b/curriculum/tasks/11-make-the-harness-fit.md
+@@ -0,0 +1,103 @@
++# Task 11 — Make the harness fit
++
++**Level 4 · Judgment** · Harness focus: project configuration, portability,
++`config-check` · Size: 2–4 h
++
++## Why this task
++
++The harness is meant for many projects with different rules. Teams adapt it
++with short standing instructions rather than code. This task tests whether
++rules you write are actually followed, and what it takes to bring the harness
++into a repository that has never seen it. Do part 1, part 2, or both.
++
++## Starting point
++
++Branch from `main`. Read the "Project adaptations" and "Install in another
++project" sections of [the harness README](../../ai-harness/README.md), and the
++current [lab configuration](../../.ai-workspace/configs/harness.md).
++
++## Brief
++
++### Part 1 — Team rules
++
++A fictional team wants these conventions applied by the harness in this
++repository:
++
++1. Any change that adds a database migration uses plan-review involvement,
++   even when the request does not say so.
++2. Branches are named `nsd-<short-slug>`, such as `nsd-incident-export`.
++3. PR bodies include a "Rollback" line describing how to undo the change.
++4. Verification always includes `bin/rails test` and `bin/rubocop`, reported
++   with their real output.
++
++Write these as standing instructions in `.ai-workspace/configs/`. Choose
++between `harness.md` and a skill-specific file such as `create-pr.md`. Then
++prove whether each rule is followed by running the harness on this small
++brief, up to PR preparation only:
++
++> Incidents get an optional "customer impact" text field, shown on the
++> incident page.
++
++(That brief needs a migration, so rule 1 applies.)
++
++### Part 2 — A second repository
++
++Install the harness into another Git repository you control: a personal
++project, or a fresh `rails new` app. Follow the README's manual installation
++steps, run `config-check` there, and take one small, real change in that
++repository through `implement-task` to PR preparation.
++
++**Acceptance criteria.**
++
++- Part 1: the configuration files, plus a table with one row per rule: rule,
++  followed (yes, no, partially), and the evidence. Where a rule was not
++  followed, one rewording attempt and its result.
++- Part 2: the `config-check` report from the second repository, a list of
++  every manual step you needed (including any the README did not mention), and
++  the PR preparation output.
++- `config-check` in this repository still reports a valid setup.
++
++**Out of scope.** Changing anything under `ai-harness/` itself. If the
++package needs a change, write it up as a suggestion.
++
++## Path A — on your own
++
++Part 1 is inherently a harness task. For a solo baseline, apply the four rules
++by hand to the brief, then compare effort and consistency with the harness
++run.
++
++## Path B — via the harness
++
++```text
++Use config-check to check this repository's harness setup.
++```
++
++```text
++Use implement-task for this brief and stop at PR preparation: Incidents get
++an optional "customer impact" text field, shown on the incident page.
++```
++
++Do not mention the rules in the request. The point is to see whether standing
++configuration applies without reminders.
++
++**Watch for.** Rules applied to the plan but forgotten by PR preparation.
++Rules that conflict with the lab's existing configuration, and which one won.
++For part 2: anything the README assumed that your second repository did not
++have.
++
++## Path C — both
++
++See path A.
++
++## Done when
++
++- The acceptance criteria for the parts you chose are met.
++- You can say which kinds of rules the harness followed reliably and which
++  needed more precise wording.
++
++## Debrief
++
++1. Which rule was hardest to state so it was followed, and what fixed it?
++2. What belongs in `AGENTS.md`, what in `.ai-workspace/configs/harness.md`,
++   and what in a skill-specific config?
++3. (Part 2) What would you change in the installation instructions?
+diff --git a/curriculum/tasks/12-capstone-vague-request.md b/curriculum/tasks/12-capstone-vague-request.md
+new file mode 100644
+index 0000000..d9bd2d8
+--- /dev/null
++++ b/curriculum/tasks/12-capstone-vague-request.md
+@@ -0,0 +1,100 @@
++# Task 12 — Capstone: from a vague request
++
++**Level 4 · Judgment** · Harness focus: the whole flow, chosen involvement,
++owning requirements · Size: 1–2 days
++
++## Why this task
++
++Real requests arrive vague. The harness asks only about decisions it cannot
++resolve from the brief, which means a vague brief gets a confident guess. This
++task makes you turn a stakeholder message into requirements you own, then
++deliver them with whatever mix of harness and hand work you judge best, and
++defend those choices.
++
++## Starting point
++
++Branch from `main`. Any part of the baseline app is fair game.
++
++## Brief
++
++**Message from the Northstar operations lead:**
++
++> Two things keep coming up. Incidents get closed and the follow-up review we
++> are supposed to write just never happens. And managers tell me they miss
++> approvals: expense claims and vacation requests sit for days. Can Desk help
++> with either? I don't need anything fancy.
++
++**Your job.**
++
++1. **Requirements first.** Write a problem statement, the scope you choose
++   (one issue or both, with a reason), and acceptance criteria someone else
++   could verify. List what you are deliberately not doing. Get a mentor or
++   peer to sign off before any code. Record the sign-off and any changes.
++2. **Deliver.** Implement the agreed scope to a draft PR in your fork. For each
++   slice, choose how to work: on your own, harness autonomous, plan-review, or
++   step-review. Write one line on why for each.
++3. **Retrospective.** A half-page note on where the harness saved time, where
++   it was wrong or would have been without you, what you verified yourself,
++   and what you would configure differently next time.
++
++**Acceptance criteria.**
++
++- The requirements were written and signed off before the first code commit.
++  Commit order or timestamps can show this.
++- Each acceptance criterion maps to evidence in the PR: a test, a command
++  output, or a described manual check.
++- A self-review was run on the final revision, and its findings are resolved
++  or explicitly accepted.
++- The PR contains only the agreed scope and follows the repository template.
++- The retrospective exists.
++
++**Out of scope.** Anything not in your signed-off requirements. If you
++discover more, write it down as follow-up work.
++
++## Path A — on your own
++
++Valid, but then the retrospective should compare against at least one earlier
++harness task.
++
++## Path B — via the harness
++
++Shape the prompts yourself. Some useful starting points:
++
++```text
++Use plan-work for <path to your requirements file>. List any decision the
++requirements leave open. Stop after planning.
++```
++
++```text
++Use implement-task for <requirements> with <involvement>. Implement only
++<slice>.
++```
++
++```text
++Use self-review for all changes on this branch against <requirements>.
++```
++
++```text
++Use create-pr to prepare a PR description for the agreed changes.
++```
++
++**Watch for.** The agent widening scope because the original message was
++broad. Your requirements file, not the stakeholder message, is the brief.
++Open decisions resolved in code instead of with your reviewer.
++
++## Path C — both
++
++Not required. Mixing approaches by slice is the point of this task.
++
++## Done when
++
++- The acceptance criteria are met and the PR URL is in your handoff.
++- You can defend your scope choice and your involvement choice for each slice
++  to a reviewer in a few minutes.
++
++## Debrief
++
++1. Which requirement changed after sign-off discussion, and why?
++2. Which involvement choice would you change in hindsight?
++3. If you were rolling the harness out to your team tomorrow, what is the one
++   thing you would tell them?
+diff --git a/curriculum/tasks/12-embeddings.md b/curriculum/tasks/12-embeddings.md
+deleted file mode 100644
+index b233629..0000000
+--- a/curriculum/tasks/12-embeddings.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 12 — Embeddings
+-
+-**Module 7 — Representation and retrieval**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** The team wants to explore why different questions may retrieve different fictional document passages. A ranking view can help explain similarity, but the prototype itself cannot establish how embeddings behave.
+-
+-**Required behavior:** The explorer uses a small, identifiable set of fictional text samples, a selected query, and a ranked result list. It shows enough source text to compare results. Mocked scores or rankings are labeled.
+-
+-**Acceptance check:** Choose two different questions from the fixture set and show how the displayed ranking changes. State whether those rankings came from actual vector calculations or were arranged for the demo.
+-
+-**PoC assignment:** Build a visual similarity explorer: several text samples, a selected query and ranked 'most similar' results. The vector math may be mocked but must be labelled.
+-
+-**Ruby:** In `standalone/`, generate/store small embeddings for the fictional documents and calculate similarity for controlled examples. Inspect actual numbers and ranking; do not add a vector database yet.
+-
+-**Compare:** What does the visualization help humans understand? What mathematical behaviour did it conceal?
+-
+-**Gate:** Explain an embedding and similarity without saying 'AI understands meaning'.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/13-semantic-search.md b/curriculum/tasks/13-semantic-search.md
+deleted file mode 100644
+index 8efca8a..0000000
+--- a/curriculum/tasks/13-semantic-search.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 13 — Semantic Search
+-
+-**Module 7 — Representation and retrieval**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** Northstar Demo staff may search the same fictional documents using exact terms or everyday language. The team needs to compare these two search experiences on the same corpus before claiming that one is better.
+-
+-**Required behavior:** Keyword and semantic results appear for the same query, with a document identifier or other source metadata. The UI has a no-result state. Any semantic ranking that is hand-picked or simulated must be identified.
+-
+-**Acceptance check:** Use a fixture question with an expected source, then ask about the office Wi-Fi password, which the supplied documents do not answer. Show both search views and explain what the PoC does not prove about retrieval quality.
+-
+-**PoC assignment:** Prototype keyword search and semantic search side by side over a tiny knowledge set. Design result metadata and no-result states.
+-
+-**Rails/Ruby:** Use the fictional `KnowledgeDocument` records from Task 06. Establish a simple keyword baseline, then implement chunk representation, embeddings, top-k search and metadata. Compare both approaches on the fixed questions in `curriculum/fixtures/README.md` and at least two learner-added cases.
+-
+-**Compare:** Which prototype examples actually demonstrate value rather than being hand-picked?
+-
+-**Gate:** Identify cases where keyword search is preferable.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/14-rag-pipeline.md b/curriculum/tasks/14-rag-pipeline.md
+deleted file mode 100644
+index 1624448..0000000
+--- a/curriculum/tasks/14-rag-pipeline.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 14 — RAG Pipeline
+-
+-**Module 8 — Grounded answers**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** When an answer is wrong, the team must tell whether the relevant document was missed, useful text was left out of the model context, or the generated answer misused that context.
+-
+-**Required behavior:** One question can be traced through retrieved chunks, assembled context, and generated answer. Each stage is inspectable without exposing unrelated data. A missing retrieval result and an unsupported generated answer have distinct visible outcomes.
+-
+-**Acceptance check:** Walk through a question answered by a fictional document and a question with insufficient evidence. Point to the stage where the second flow stops or fails.
+-
+-**PoC assignment:** Build a pipeline inspector: question → retrieved chunks → assembled context → generated answer. Let the user expand each stage.
+-
+-**Rails/Ruby:** Implement the real retrieval and generation pipeline. Persist/inspect retrieval metadata and refuse unsupported answers.
+-
+-**Compare:** Which independent failure points became visible only after implementing the pipeline?
+-
+-**Gate:** Explain retrieval failure separately from generation failure.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/15-grounding-sources.md b/curriculum/tasks/15-grounding-sources.md
+deleted file mode 100644
+index b24147c..0000000
+--- a/curriculum/tasks/15-grounding-sources.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 15 — Grounding and Sources
+-
+-**Module 8 — Grounded answers**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** Northstar Demo staff need to know which supplied document supports an answer before trusting it. A citation label is useful only when the corresponding evidence can be inspected.
+-
+-**Required behavior:** An answer can show a source identifier and the supporting passage or panel. When the documents do not support an answer, the UI says there is insufficient evidence and avoids a misleading citation. Mocked support must be labeled.
+-
+-**Acceptance check:** Show an expense claim answer with its supporting D01 passage, then ask for the office Wi-Fi password. The reviewer should see why the second question cannot be answered from the supplied documents.
+-
+-**PoC assignment:** Design answers with source references, evidence panels and an explicit 'insufficient evidence' state.
+-
+-**Rails/Ruby:** Carry source/chunk metadata through retrieval to the response. Add unsupported-question tests and examples of good retrieval/bad generation and the reverse.
+-
+-**Compare:** A citation-looking UI is easy. What makes a source reference truthful?
+-
+-**Gate:** Demonstrate that every displayed source maps to evidence actually used by the system.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/16-evaluation-workbench.md b/curriculum/tasks/16-evaluation-workbench.md
+deleted file mode 100644
+index 6d34982..0000000
+--- a/curriculum/tasks/16-evaluation-workbench.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 16 — Evals
+-
+-**Module 9 — Quality and operational risk**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** The team needs repeatable evidence when a prompt or retrieval change appears to improve the Knowledge Assistant. A dashboard must show what was checked, not only a single aggregate score.
+-
+-**Required behavior:** Each case has a question, expected source or key facts, and visible pass/fail dimensions. The same cases can be compared before and after a change. Any score without a real evaluator is labeled as sample data.
+-
+-**Acceptance check:** Show one passing and one failing fixture-based case, then compare two versions on the same case set. Explain which displayed judgments would require an evaluation runner.
+-
+-**PoC assignment:** Prototype an evaluation dashboard with test cases, expected source/key facts, pass/fail dimensions and before/after comparison.
+-
+-**Ruby/Rails:** Create a versioned eval dataset and runner. Measure retrieval success, key-fact coverage, grounding/source support and relevant format checks. Use the runner to compare at least two prompt versions on the same dataset and configuration. Record the prompt diff, hypothesis and evidence-based decision.
+-
+-**Compare:** Which dashboard numbers are backed by real measurement and which would be decorative without an evaluator?
+-
+-**Gate:** Use the eval set to identify at least one real weakness instead of merely reporting a score.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/17-observability.md b/curriculum/tasks/17-observability.md
+deleted file mode 100644
+index e145996..0000000
+--- a/curriculum/tasks/17-observability.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 17 — Cost, Latency and Observability
+-
+-**Module 9 — Quality and operational risk**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** The team needs to notice slow, costly, or failing requests and decide what to investigate. A useful operations view links a measurement to a possible action.
+-
+-**Required behavior:** A request view includes duration, model, token or cost information, retrieval time, and failure status where available. Missing measurements are shown as unavailable rather than invented values. Sample metrics are labeled.
+-
+-**Acceptance check:** Show a slow request and a failed request. For each, state what the reviewer would investigate and whether the displayed numbers are real or simulated.
+-
+-**PoC assignment:** Prototype an operations view showing request duration, model, tokens/cost, retrieval time and failures. Define what action each metric could trigger.
+-
+-**Rails/Ruby:** Capture real available metrics and produce a simple report over evaluation runs.
+-
+-**Compare:** Remove any prototype metric that cannot be collected or cannot drive a decision.
+-
+-**Gate:** Explain one architecture/model/prompt decision that the measurements could change.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/18-security.md b/curriculum/tasks/18-security.md
+deleted file mode 100644
+index 73f6d60..0000000
+--- a/curriculum/tasks/18-security.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 18 — Adversarial Playground
+-
+-**Module 9 — Quality and operational risk**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** The assistant may read untrusted text and receive model-proposed tool arguments. The team needs to make the trust boundary visible before relying on a prompt to keep the application safe.
+-
+-**Required behavior:** The screen contains synthetic prompt-injection examples, malicious document content, and unsafe tool arguments. It shows proposed actions and whether the application blocks or allows them, with a reason. No real company content is used.
+-
+-**Acceptance check:** Try a fictional document that tells the assistant to ignore its task and an unsafe tool argument. Show where the application would reject each attempt; label any simulated enforcement.
+-
+-**PoC assignment:** Design an adversarial testing screen containing prompt-injection examples, malicious document scenarios, unsafe tool arguments and blocked/allowed outcomes. Use synthetic data only.
+-
+-**Rails/Ruby:** Threat-model the application and implement at least five controlled adversarial tests/mitigations around authorization, tools, data leakage, logging and retrieved content.
+-
+-**Compare:** Which threats are product/UI problems and which require backend trust boundaries?
+-
+-**Gate:** Explain why prompt text alone cannot enforce authorization.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/19-product-hypothesis.md b/curriculum/tasks/19-product-hypothesis.md
+deleted file mode 100644
+index 9c6ef5d..0000000
+--- a/curriculum/tasks/19-product-hypothesis.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 19 — Product Experiment
+-
+-**Module 10 — Product judgment**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** Earlier lessons should have produced a specific user friction or product weakness. The team wants to test one improvement before committing to a larger Rails change.
+-
+-**Required behavior:** The brief for this experiment names the user problem, current workflow, non-AI baseline, proposed improvement, success measure, and main risks. The PoC demonstrates only the smallest changed interaction needed to test that hypothesis.
+-
+-**Acceptance check:** Demo the current and proposed flows with the same fictional question. Explain what feedback or measurement would support continuing, revising, or dropping the idea.
+-
+-**PoC assignment:** Use Lovable to rapidly test an improved Knowledge Assistant workflow with a product hypothesis grounded in earlier evidence.
+-
+-**Rails/Strategy:** Write the user problem, current workflow, non-AI baseline, AI hypothesis, metric, risks and smallest experiment. Implement only the smallest Rails change needed to test the hypothesis.
+-
+-**Compare:** What did the prototype validate about user experience? What did it not validate about model quality, feasibility, security or economics?
+-
+-**Gate:** Make a next-experiment recommendation from evidence, not attachment to the prototype.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/tasks/20-capstone.md b/curriculum/tasks/20-capstone.md
+deleted file mode 100644
+index ee60943..0000000
+--- a/curriculum/tasks/20-capstone.md
++++ /dev/null
+@@ -1,23 +0,0 @@
+-# Task 20 — Capstone
+-
+-**Module 10 — Product judgment**
+-
+-## Documentation supplied for the PoC
+-
+-**Situation:** The final product improvement must address a documented weakness from user feedback, evaluation, or operational evidence. The team needs a focused proposal it can review before the production-shaped slice is built.
+-
+-**Required behavior:** The brief identifies the evidence, affected user workflow, proposed change, expected outcome, and one failure or unsupported state. The PoC makes that change visible without implying that the backend already proves the hypothesis.
+-
+-**Acceptance check:** Demo the before and proposed after flows, including the failure state. Point to the evidence that motivated the change and explain what later implementation and evaluation must still establish.
+-
+-**PoC assignment:** Prototype one meaningful product improvement selected from user/eval/operational evidence. State the hypothesis before building.
+-
+-**Rails/Ruby:** Implement the production-shaped vertical slice, tests and evaluation. Add/update ADR and threat considerations where relevant.
+-
+-**Defence:** Demo the prototype and real implementation side by side. Explain architecture without AI, respond to a requested code change, show before/after evidence, close the private Learning Agent log, and submit a final [lesson handoff](../templates/LESSON_HANDOFF.md). Internal company data remains outside the lab until the [internal-use gate](../INTERNAL_USE_GATE.md) is met.
+-
+-**Final gate:** The Junior can distinguish clearly between what the prototype proved, what the implementation proved and what still requires evidence.
+-
+-## Completion
+-
+-Follow the [lesson workflow](../WORKFLOW.md). Read the supplied documentation, keep the Lovable change small, demo it, and record the review decision. After approval, implement the agreed behavior in Ruby or Rails, show verification, and close the session in the private Learning Agent log.
+diff --git a/curriculum/templates/LESSON_HANDOFF.md b/curriculum/templates/LESSON_HANDOFF.md
+index 345772e..80d7f8c 100644
+--- a/curriculum/templates/LESSON_HANDOFF.md
++++ b/curriculum/templates/LESSON_HANDOFF.md
+@@ -1,28 +1,28 @@
+-# Task XX — Lesson handoff
++# Task NN — Handoff
+ 
+-Keep this note short and in the learner's own words. Share only what you are comfortable putting in a PR. The detailed learning log stays private.
++Keep this short and in your own words. Share only what you are comfortable
++putting in a PR. The task workspace and your learning log stay private.
+ 
+-## Before
++## What was asked
+ 
+-- Documentation I received and the requirement I chose to demonstrate:
+-- What I expected:
+-- My first approach:
++- Task and the acceptance criteria I worked to:
++- Path: on my own / via the harness / both
+ 
+-## What I made
++## What was done
+ 
+-- Lovable behavior and what was mocked:
+-- PoC demo and review decision (approved, changes requested, or rejected):
+-- Ruby or Rails behavior:
+-- Where the two differ:
++- Behavior added or changed:
++- Prompts or involvement level I used (harness path):
++- Where I intervened, corrected, or rejected the agent's work:
+ 
+ ## Evidence
+ 
+-- Test, command, or demo and its result:
++- Checks I ran myself, with results:
++- Checks the agent reported that I did not re-run:
+ - What this evidence does not establish:
+ 
+-## Learning
++## Reflection
+ 
+-- One thing I can now explain:
+-- A wrong assumption or difficult part:
+-- How AI helped; what I verified myself:
+-- One open question for the mentor:
++- One thing the harness did well:
++- One thing it got wrong or would have got wrong without me:
++- For path C, the main difference between the two attempts:
++- One open question:

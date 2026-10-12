@@ -6,6 +6,64 @@ on:
     branches: [ main ]
 
 jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Check documentation links and training task structure
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          from urllib.parse import unquote
+
+          root = Path.cwd()
+          sources = [Path("README.md"), Path("AGENTS.md"), Path("standalone/README.md"), Path(".github/pull_request_template.md")]
+          sources += list(Path("curriculum").rglob("*.md")) + list(Path("ai-harness").rglob("*.md"))
+          errors = []
+          for source in sources:
+              if not source.is_file():
+                  errors.append(f"Missing documentation: {source}")
+                  continue
+              content = source.read_text()
+              for target in re.findall(r"\]\(([^)]+)\)", content):
+                  if re.match(r"[a-zA-Z][a-zA-Z0-9+.-]*:", target) or target.startswith("#"):
+                      continue
+                  path, _, fragment = unquote(target).partition("#")
+                  destination = source.parent / path
+                  if not destination.exists():
+                      errors.append(f"{source}: broken link to {target}")
+                  elif fragment and destination.suffix == ".md":
+                      anchors = set()
+                      for heading in re.findall(r"^#{1,6} (.+)$", destination.read_text(), re.MULTILINE):
+                          anchor = re.sub(r"[^\w\s-]", "", heading.lower()).replace(" ", "-")
+                          anchors.add(anchor)
+                      if fragment not in anchors:
+                          errors.append(f"{source}: missing heading in {target}")
+
+          tasks = sorted(Path("curriculum/tasks").glob("*.md"))
+          numbers = [task.name.split("-", 1)[0] for task in tasks]
+          if numbers != [f"{number:02d}" for number in range(1, 13)]:
+              errors.append("Expected exactly Tasks 01-12, with no duplicate or missing numbers")
+          index = Path("curriculum/README.md").read_text()
+          sections = ["## Starting point", "## Brief", "## Path A", "## Path B", "## Path C", "## Done when", "## Debrief"]
+          for task in tasks:
+              content = task.read_text()
+              if not content.startswith(f"# Task {task.name[:2]} "):
+                  errors.append(f"{task}: title does not match its task number")
+              if f"tasks/{task.name}" not in index:
+                  errors.append(f"{task}: not linked from the task index")
+              for section in sections:
+                  if section not in content:
+                      errors.append(f"{task}: missing {section}")
+
+          if errors:
+              raise SystemExit("\n".join(errors))
+          print(f"Documentation checks passed: {len(sources)} files, 12 task pages, local links and headings.")
+          PY
+
   scan_ruby:
     runs-on: ubuntu-latest
 
@@ -16,7 +74,12 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          bundler-cache: true
+          ruby-version: "4.0.6"
+
+      - name: Install dependencies for the Linux runner
+        run: |
+          bundle lock --add-platform x86_64-linux
+          bundle install
 
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
@@ -32,7 +95,12 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          bundler-cache: true
+          ruby-version: "4.0.6"
+
+      - name: Install dependencies for the Linux runner
+        run: |
+          bundle lock --add-platform x86_64-linux
+          bundle install
 
       - name: Prepare RuboCop cache
         uses: actions/cache@v4
@@ -76,7 +144,12 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          bundler-cache: true
+          ruby-version: "4.0.6"
+
+      - name: Install dependencies for the Linux runner
+        run: |
+          bundle lock --add-platform x86_64-linux
+          bundle install
 
       - name: Run tests
         env:

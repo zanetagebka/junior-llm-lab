@@ -1,6 +1,6 @@
-# Fictional Knowledge Assistant documents
+# Fictional Northstar Desk documents
 
-These are synthetic source documents for lessons on keyword search, embeddings, retrieval, citation support, and evaluations. They describe a fictional organization and are not company policy. Keep their IDs stable so the same questions can be reused across tasks.
+These are synthetic source documents. They supply the business rules for the Northstar Desk baseline app and the handbook content for Task 10. They describe a fictional organization and are not company policy. Keep their IDs stable so the same questions can be reused across tasks.
 
 Suggested baseline questions:
 
@@ -10,4 +10,4 @@ Suggested baseline questions:
 4. How far ahead is vacation requested? Expected source: `D04`.
 5. What is the office Wi-Fi password? Expected behavior: insufficient evidence.
 
-The learner should add tricky or ambiguous cases before claiming that semantic search or RAG is better than the keyword baseline.
+Add tricky or ambiguous cases before claiming that answer quality has improved.
